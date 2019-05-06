@@ -73,8 +73,8 @@
                 td.setAttribute('id', i*v + j);
                 if (mine == 1 && ((currentHAmount < h/5 || currentVAmount[j] < v/5)))  {
                     currentHAmount++;
-                    currentVAmount[j] ++;
-                    currentMines ++;
+                    currentVAmount[j]++;
+                    currentMines++;
                     mines[i*v+j] = 9;
                 }
                 field.appendChild(td);
