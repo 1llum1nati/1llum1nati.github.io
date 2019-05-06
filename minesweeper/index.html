@@ -71,10 +71,10 @@
                 let mine = getRandom();
                 const td = document.createElement("td"); 
                 td.setAttribute('id', i*v + j);
-                if (mine == 1 && ((currentHAmount < h/10 || currentVAmount[j] < v/10) && (mine < 10)))  {
+                if (mine == 1 && ((currentHAmount < h/7 || currentVAmount[j] < v/5) && (mine < 10)))  {
                     currentHAmount = 1;
-                    currentVAmount[j] += 1;
-                    currentMines +=1;
+                    currentVAmount[j] ++;
+                    currentMines ++;
                     mines[i*v+j] = 9;
                 }
                 field.appendChild(td);
