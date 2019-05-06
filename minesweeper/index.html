@@ -1,0 +1,344 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta charset="utf-8">
+
+  <style>
+    td {
+        width: 20px;
+        height: 20px;
+        background-color: grey;
+
+    }
+
+    .bomb {
+        background-color: red;
+    }
+  </style>
+  
+</head>
+<body>
+    <div id="newGame" style="height: 100px; width: 200px; background-color: rgb(134, 155, 177); display: flex; align-items: center; justify-content: center">
+        Новая игра
+    </div>
+    <div id="clear" style="margin-left: 250px; margin-top: -100px; height: 100px; width: 200px; background-color: rgb(134, 155, 177); display: flex; align-items: center; justify-content: center">
+        Сброс
+    </div>
+    <!-- <form id="countOfFields">
+        <input type="text" name="h" value="1"><br>
+        <input type="text" name="v" value="1"><br>
+        <input id="submits" type="submit" value="Отправить" onsubmit="alert('ss'); return false;">
+    </form> -->
+
+    <table border="2" id="field" cellspacing="0" style="margin-top: 20px; display: none; text-align: center;">
+    </table>
+  </body>
+  <script>/*jshint esversion: 6 */
+    const createField = document.querySelector('#newGame');
+    const field = document.querySelector('#field');
+    const countField = document.querySelector('#countOfFields');
+    const clear = document.querySelector('#clear');
+    const td = document.querySelectorAll('td');
+    //const submit = document.querySelector('#submit');
+    const v = 5;
+    const h = 5;
+
+    // const v = prompt("Вертикаль");
+    // const h = prompt("Вертикаль");
+
+    var currentVAmount = [];
+    var currentHAmount = 0;
+    var currentMines = 0;
+    var mines = [];
+    var flag = 0;
+    var win = 0;
+
+    for (let i = 0; i < v; i++) {
+        currentVAmount[i] = 0;
+        for (let j = 0; j < h; j++) {
+            mines[i*v+j] = 0;
+        }
+    }
+
+    function newField() {
+        field.style.display = 'table';
+        for (let i = 0; i < v; i++) {
+            const tr = document.createElement("tr"); 
+            field.appendChild(tr);
+            for (let j = 0; j < h; j++) {
+                let mine = getRandom();
+                const td = document.createElement("td"); 
+                td.setAttribute('id', i*v + j);
+                if (mine == 1 && currentHAmount < h/3 && currentVAmount[j] < v/3)  {
+                    currentHAmount = 1;
+                    currentVAmount[j] += 1;
+                    currentMines +=1;
+                    mines[i*v+j] = 9;
+                }
+                field.appendChild(td);
+            }
+            currentHAmount = 0;
+        }
+        for (let i = 0; i < v*h; i++) {
+            let check1 = [i-h-1, i-h, i-h+1, i-(-1), i-(-h-1), i-(-h), i-(1-h), i-1];
+            let check3 = [i-h-1, i-h, i-(-h), i-(1-h), i-1];
+            let check5 = [i-h-1, i-h, i-h+1, i-(-1), i-1];
+            let check6 = [i-1, i-h-1, i-h];
+            flag = 0;
+            if (mines[i] != 9) {
+                    if (i % h == 0) {
+                    if (Math.floor(i / v) == (v-1)) {
+                        for (let j = 1; j < 3; j++) {
+                            if (mines[check1[j]] == 9) {
+                                flag++;
+                            }
+                        }
+                        mines[i] = flag;
+                    } else if (Math.floor(i / v) == 0) {
+                            for (let j = 3; j < 5; j++) {
+                                if (mines[check1[j]] == 9) {
+                                    flag++;
+                                }
+                            }
+                            mines[i] = flag;
+                        }   
+                    else {
+                        for (let j = 1; j < 6; j++) {
+                            if (mines[check1[j]] == 9) {
+                                flag++;
+                            }
+                        }
+                        mines[i] = flag; 
+                    }
+                } else if ((i-(-1)) % h == 0) {
+                        if (Math.floor(i / v) == (v-1)) {
+                            for (let j = 0; j < 2; j++) {
+                                if (mines[check6[j]] == 9) {
+                                    flag++;
+                                }
+                            } 
+                    } else if (Math.floor(i / v) == 0 && (i-(-1)) % h == 0) {
+                            for (let j = 5; j < 7; j++) {
+                                if (mines[check1[j]] == 9) {
+                                    flag++;
+                                }
+                            }
+                            mines[i] = flag;
+                    } else {
+                        for (let j = 0; j < 5; j++) {
+                            if (mines[check3[j]] == 9) {
+                                flag++;
+                            }
+                        }
+                        mines[i] = flag;
+                    }
+                } else if (Math.floor(i / v) == 0 && (i-(-1)) % h != 0 && i % h != 0) {
+                    for (let j = 3; j < 8; j++) {
+                        if (mines[check1[j]] == 9) {
+                            flag++;
+                        }
+                    }
+                    mines[i] = flag;
+                } else if (Math.floor(i / v) == (v-1) && (i-(-1)) % h != 0 && i % h != 0) {
+                    for (let j = 0; j < 5; j++) {
+                        if (mines[check5[j]] == 9) {
+                            flag++;
+                        }
+                    }
+                    mines[i] = flag;
+                } else {
+                    for (let j = 0; j < 8; j++) {
+                        if (mines[check1[j]] == 9) {
+                            flag++;
+                        }
+                    }
+                    mines[i] = flag;
+                }
+                if (flag == 0) {
+                    mines[i] = '';
+                    console.log(flag);
+                }
+            }
+        }
+        console.log('Всего мин', currentMines);
+        console.log(v*h - currentMines);
+        console.log(mines);
+        createField.removeEventListener('click', newField);
+    }
+    field.addEventListener('click', function(event) {
+        t = event.target || event.srcElement;
+        var id = t.id;
+        validate(id);       
+        function validate(id) {
+            if (mines[t.id] == 9) {
+            t.style.backgroundColor = 'red';
+        } else {
+            
+            if (t.style.backgroundColor != 'white') {
+                win++;
+            }
+            t.style.backgroundColor = 'white';
+            
+            flag = 0;
+            let check1 = [id-h-1, id-h, id-h+1, id-(-1), id-(-h-1), id-(-h), id-(1-h), id-1];
+            let check3 = [id-h-1, id-h, id-(-h), id-(1-h), id-1];
+            let check5 = [id-h-1, id-h, id-h+1, id-(-1), id-1];
+            let check6 = [id-1, id-h-1, id-h];
+        
+            if (id % h == 0) {
+                if (Math.floor(id / v) == (v-1)) {
+                    for (let i = 1; i < 4; i++) {
+                        if (mines[check1[i]] == 9) {
+                            flag++;
+                            t.innerHTML = flag;
+                        } else if (mines[id] == '') {
+                            if (document.getElementById(check1[i]).style.backgroundColor != 'white') {
+                                win++;
+                            }
+                            document.getElementById(check1[i]).style.backgroundColor = 'white'; 
+                            document.getElementById(check1[i]).innerHTML = mines[check1[i]]; 
+                        }
+                    } 
+                }  
+                if (Math.floor(id / v) == 0) {
+                    for (let i = 3; i < 6; i++) {
+                        if (mines[check1[i]] == 9) {
+                            flag++;
+                            t.innerHTML = flag;
+                        } else if (mines[id] == '') {
+                            if (document.getElementById(check1[i]).style.backgroundColor != 'white') {
+                                win++;
+                            }
+                            document.getElementById(check1[i]).style.backgroundColor = 'white'; 
+                            document.getElementById(check1[i]).innerHTML = mines[check1[i]]; 
+                        }
+                    } 
+                }   
+                if (Math.floor(id / v) != 0 && Math.floor(id / v) != (v-1)) {
+                    for (let i = 1; i < 6; i++) {
+                        if (mines[check1[i]] == 9) {
+                            flag++;
+                            t.innerHTML = flag;
+                        } else if (mines[id] == '') {
+                            if (document.getElementById(check1[i]).style.backgroundColor != 'white') {
+                                win++;
+                            }
+                            document.getElementById(check1[i]).style.backgroundColor = 'white'; 
+                            document.getElementById(check1[i]).innerHTML = mines[check1[i]];
+                        }
+                    } 
+                }
+            } else if ((id-(-1)) % h == 0) {
+                    if (Math.floor(id / v) == (v-1)) {
+                        for (let i = 0; i < 3; i++) {
+                            if (mines[check6[i]] == 9) {
+                                flag++;
+                                t.innerHTML = flag;
+                            } else if (mines[id] == '') {
+                                if (document.getElementById(check6[i]).style.backgroundColor != 'white') {
+                                    win++;
+                                }
+                                document.getElementById(check6[i]).style.backgroundColor = 'white'; 
+                                document.getElementById(check6[i]).innerHTML = mines[check6[i]];
+                            }
+                        } 
+                    } 
+                    if (Math.floor(id / v) == 0) {
+                        for (let i = 5; i < 8; i++) {
+                            if (mines[check1[i]] == 9) {
+                                flag++;
+                                 t.innerHTML = flag;
+                            } else if (mines[id] == '') {
+                                if (document.getElementById(check1[i]).style.backgroundColor != 'white') {
+                                    win++;
+                                }
+                                document.getElementById(check1[i]).style.backgroundColor = 'white'; 
+                                document.getElementById(check1[i]).innerHTML = mines[check1[i]];
+                            }
+                        } 
+                    } 
+                    if (Math.floor(id / v) != 0 && Math.floor(id / v) != (v-1)){
+                        for (let i = 0; i < 5; i++) {
+                            if (mines[check3[i]] == 9) {
+                                flag++;
+                                t.innerHTML = flag;
+                            } else if (mines[id] == '') {
+                                if (document.getElementById(check3[i]).style.backgroundColor != 'white') {
+                                    win++;
+                                }
+                                document.getElementById(check3[i]).style.backgroundColor = 'white'; 
+                                document.getElementById(check3[i]).innerHTML = mines[check3[i]];
+                            }
+                        } 
+                    }
+                }  else if (Math.floor(id / v) == 0 && (id-(-1)) % h != 0 && id % h != 0) {
+                        for (let i = 3; i < 8; i++) {
+                            if (mines[check1[i]] == 9) {
+                                flag++;
+                                t.innerHTML = flag;
+                            } else if (mines[id] == '') {
+                                if (document.getElementById(check1[i]).style.backgroundColor != 'white') {
+                                    win++;
+                                }
+                                document.getElementById(check1[i]).style.backgroundColor = 'white'; 
+                                document.getElementById(check1[i]).innerHTML = mines[check1[i]];
+                            }
+                        } 
+                    } else  if (Math.floor(id / v) == (v-1) && (id-(-1)) % h != 0 && id % h != 0) {
+                                for (let i = 0; i < 5; i++) {
+                                    if (mines[check5[i]] == 9) {
+                                        flag++;
+                                        t.innerHTML = flag;
+                                    } else if (mines[id] == '') {
+                                        if (document.getElementById(check5[i]).style.backgroundColor != 'white') {
+                                            win++;
+                                        }
+                                        document.getElementById(check5[i]).style.backgroundColor = 'white'; 
+                                        document.getElementById(check5[i]).innerHTML = mines[check5[i]];
+                                    }
+                                } 
+                            } else {
+                                for (let i = 0; i < 8; i++) {
+                                    if (mines[check1[i]] == 9) {
+                                        flag++;
+                                        t.innerHTML = flag;
+                                    } else if (mines[id] == '') {
+                                        if (document.getElementById(check1[i]).style.backgroundColor != 'white') {
+                                            win++;
+                                        }
+                                        document.getElementById(check1[i]).style.backgroundColor = 'white'; 
+                                        document.getElementById(check1[i]).innerHTML = mines[check1[i]];
+                                    }
+                                } 
+                            }    
+                            if (win == v*h - currentMines) {
+                                alert("gg");
+                            }         
+            }
+        }
+    });
+
+    function clearField() {
+        field.innerHTML = ``;
+        field.style.display = 'none';
+        currentMines = 0;
+        win = 0;
+        for (let i = 0; i < v; i++) {
+            currentVAmount[i] = 0;
+            for (let j = 0; j < h; j++) {
+                mines[i*v+j] = 0;
+            }
+        }
+        createField.addEventListener('click', newField);
+    }
+
+    console.log(currentVAmount);
+    
+    function getRandom() {
+        return Math.round(Math.random());
+    }
+   createField.addEventListener('click', newField);
+   clear.addEventListener('click', clearField);
+  </script>
+</html>
