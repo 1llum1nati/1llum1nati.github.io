@@ -166,6 +166,7 @@
         console.log(v*h - currentMines);
         console.log(mines);
         createField.removeEventListener('click', newField);
+        field.addEventListener('click', f);
     }
     
     field.addEventListener('click', f = function(event) {
