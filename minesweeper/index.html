@@ -71,7 +71,7 @@
                 let mine = getRandom();
                 const td = document.createElement("td"); 
                 td.setAttribute('id', i*v + j);
-                if (mine == 1 && ((currentHAmount < h/5 && currentVAmount[j] < v/3)))  {
+                if (mine == 1 && ((currentHAmount < h/3 && currentVAmount[j] < v/3)))  {
                     currentHAmount++;
                     currentVAmount[j] ++;
                     currentMines ++;
