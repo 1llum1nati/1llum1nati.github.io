@@ -52,6 +52,7 @@
     var currentMines = 0;
     var mines = [];
     var flag = 0;
+    var f;
     var win = 0;
 
     for (let i = 0; i < v; i++) {
@@ -70,7 +71,7 @@
                 let mine = getRandom();
                 const td = document.createElement("td"); 
                 td.setAttribute('id', i*v + j);
-                if (mine == 1 && currentHAmount < h/4 && currentVAmount[j] < v/3)  {
+                if (mine == 1 && ((currentHAmount < h/10 || currentVAmount[j] < v/10) && (mine < 10)))  {
                     currentHAmount = 1;
                     currentVAmount[j] += 1;
                     currentMines +=1;
@@ -166,7 +167,8 @@
         console.log(mines);
         createField.removeEventListener('click', newField);
     }
-    field.addEventListener('click', function(event) {
+    
+    field.addEventListener('click', f = function(event) {
         t = event.target || event.srcElement;
         var id = t.id;
         validate(id);       
@@ -174,8 +176,7 @@
             if (mines[t.id] == 9) {
             t.style.backgroundColor = 'red';
             alert("boom");
-            clearField();
-            newField();
+            visibility();
         } else {
             
             if (t.style.backgroundColor != 'white') {
@@ -334,6 +335,20 @@
             }
         }
         createField.addEventListener('click', newField);
+    }
+
+    function visibility() {
+        for (let i = 0; i < v*h; i++) {
+            if (mines[i] == 9) {
+                document.getElementById(i).style.backgroundColor = 'red';
+            }
+            else {
+                document.getElementById(i).style.backgroundColor = 'white';
+                document.getElementById(i).innerHTML = mines[i];
+            }
+             
+        }
+        field.removeEventListener('click', f, false);
     }
 
     console.log(currentVAmount);
