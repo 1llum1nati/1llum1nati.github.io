@@ -41,8 +41,8 @@
     const clear = document.querySelector('#clear');
     const td = document.querySelectorAll('td');
     //const submit = document.querySelector('#submit');
-    const v = 5;
-    const h = 5;
+    const v = 7;
+    const h = 7;
 
     // const v = prompt("Вертикаль");
     // const h = prompt("Вертикаль");
@@ -70,7 +70,7 @@
                 let mine = getRandom();
                 const td = document.createElement("td"); 
                 td.setAttribute('id', i*v + j);
-                if (mine == 1 && currentHAmount < h/3 && currentVAmount[j] < v/3)  {
+                if (mine == 1 && currentHAmount < h/4 && currentVAmount[j] < v/3)  {
                     currentHAmount = 1;
                     currentVAmount[j] += 1;
                     currentMines +=1;
@@ -173,6 +173,9 @@
         function validate(id) {
             if (mines[t.id] == 9) {
             t.style.backgroundColor = 'red';
+            alert("boom");
+            clearField();
+            newField();
         } else {
             
             if (t.style.backgroundColor != 'white') {
