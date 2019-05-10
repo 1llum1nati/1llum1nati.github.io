@@ -50,8 +50,7 @@
 
     console.log("start = ", mines);
     function newField() {
-        v = prompt("Вертикаль");
-        h = prompt("Горизонталь");
+        h = v = prompt("Размер");
         if (v > 2 && h > 2) {
             difficulty = Math.round(v*h / 3);
             reset();
