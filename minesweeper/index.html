@@ -125,6 +125,10 @@
         main(event);
     });
 
+    field.addEventListener('keypress', f = function(event) {
+        alert(event.keyCode);
+    });
+
     field.addEventListener('contextmenu', e = function(event) {
         event.preventDefault();
     }, false);
