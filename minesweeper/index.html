@@ -125,6 +125,11 @@
         main(event);
     });
 
+    field.addEventListener('keydown', h = function(event) {
+
+       console.log(event.keyCode);
+    });
+
     field.addEventListener('contextmenu', e = function(event) {
         event.preventDefault();
     }, false);
