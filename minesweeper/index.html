@@ -85,6 +85,7 @@
                 }
             }
             createField.removeEventListener('click', newField);
+            field.addEventListener('mousedown', f);
         } else {
             alert("s > 4 && s < 51!");
         }
@@ -217,6 +218,7 @@
     function winCheck() {
         if (win == v*h - difficulty) {
             alert("gg");
+            openField();
         }
     }
 
