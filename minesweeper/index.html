@@ -127,10 +127,6 @@
 
     field.addEventListener('contextmenu', e = function(event) {
         event.preventDefault();
-        x = +event.target.getAttribute('x');
-        y = +event.target.getAttribute('y');
-        var color = document.getElementById(x*v+y);
-        color.style.backgroundColor = "green"; 
     }, false);
 
     function mine(a, b) {
