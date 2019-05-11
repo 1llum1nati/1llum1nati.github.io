@@ -50,7 +50,7 @@
     
     function newField() {
         h = v = prompt("Размер");
-        if (v > 2 && h > 2) {
+        if (v > 2 && v < 50) {
             difficulty = Math.round(v*h / 3);
             reset();
             field.style.display = 'table';
@@ -87,7 +87,7 @@
             }
             createField.removeEventListener('click', newField);
         } else {
-            alert("v < 2 && h < 2 !");
+            alert("s > 2 && s < 50 !");
         }
     }
 
