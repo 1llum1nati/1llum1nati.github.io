@@ -85,7 +85,9 @@
                 }
             }
             createField.removeEventListener('click', newField);
-            field.addEventListener('mousedown', f);
+            field.addEventListener('mousedown', f = function(event) {
+                main(event);
+            });
         } else {
             alert("s > 4 && s < 51!");
         }
