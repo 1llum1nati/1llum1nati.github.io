@@ -125,6 +125,14 @@
         main(event);
     });
 
+
+    field.addEventListener('keydown', r = function(event) {
+        if (event.keyCode == 49) {
+            alert("PIZDa");
+        }
+    });
+    
+
     field.addEventListener('contextmenu', e = function(event) {
         event.preventDefault();
     }, false);
