@@ -86,9 +86,6 @@
                     }
                 }
             }
-
-            console.log("end = ", mines);
-            console.log("count = ", flag);
             createField.removeEventListener('click', newField);
         } else {
             alert("v < 2 && h < 2 !");
@@ -133,7 +130,6 @@
         event.preventDefault();
     }, false);
 
-    
     function mine(a, b) {
         if((a >= 0) && (a < v)) {
             if((b >= 0) && (b < h)) {
@@ -191,7 +187,6 @@
         if ((f >= 0) && (f < v)) {
             if ((g >= 0) && (g < h)) {
                 color = document.getElementById(f*v+g);
-                console.log(color);
                 color.style.backgroundColor = "white";
                 color.innerHTML = mines[f][g];
                 if (!minesCheck[f][g]) {
@@ -236,8 +231,6 @@
         flag = 0;
         createField.addEventListener('click', newField);
     }
-
-    console.log(currentVAmount);
     
     function getRandom() {
         return Math.round(Math.random());
