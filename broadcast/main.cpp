@@ -5,6 +5,8 @@
 #include <string>
 #include <algorithm>
 
+//
+
 #define seed 10
 #define countOfPC 20
 #define countOfSwitches 10
