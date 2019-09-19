@@ -104,14 +104,12 @@ int main()
         listOfServers[i]->generateAddress(addressGen);
         ++addressGen;
 
-        listOfServers[i]->toWhomConnected.insert(listOfServers[i]->toWhomConnected.end(), rand() % countOfSwitches);
-        listOfServers[i]->toWhomConnected.insert(listOfServers[i]->toWhomConnected.end(), rand() % countOfSwitches);
-        ++listOfSwitches[listOfServers[i]->toWhomConnected[0]]->countConnect;
-        ++listOfSwitches[listOfServers[i]->toWhomConnected[1]]->countConnect;
-        //cout << listOfServers[i]->toWhomConnected[0] << " " << listOfServers[i]->toWhomConnected[1] << endl;
-        //cout << listOfSwitches[listOfServers[i]->toWhomConnected[0]]->countConnect << " " << listOfSwitches[listOfServers[i]->toWhomConnected[1]]->countConnect << endl;
-        //cout << "-----------------" << endl;
+        for (int j = 0; j != 2; ++j) {
+            listOfServers[i]->toWhomConnected.push_back(rand() % countOfSwitches);
+            ++listOfSwitches[listOfServers[i]->toWhomConnected[j]]->countConnect;
+        }
     }
+
     for (int i = 0; i != countOfPC; ++i) {
         PC *tempPC = new PC;
         listOfPC.push_back(tempPC);
@@ -176,5 +174,13 @@ int main()
         else
             cout << "PC " << a->address << "->" << a->toWhomConnected[0] << endl;
     }
+
+    for (auto &a: listOfSwitches)
+        delete a;
+    for (auto &a: listOfServers)
+        delete a;
+    for (auto &a: listOfPC)
+        delete a;
+
     return 0;
 }
