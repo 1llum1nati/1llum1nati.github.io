@@ -100,7 +100,6 @@ int main()
     for (int i = 0; i != countOfServers; ++i) {
         Server *tempServer = new Server;
         listOfServers.push_back(tempServer);
-
         listOfServers[i]->generateAddress(addressGen);
         ++addressGen;
 
@@ -121,26 +120,30 @@ int main()
 
     for (int i = 0; i != countOfPC; ++i) {
         randChoice = rand() % 2;
-        if (!randChoice) {
-            randSwitch = rand() % countOfSwitches;
-            if (listOfSwitches[randSwitch]->countConnect < 4) {
-                ++listOfSwitches[randSwitch]->countConnect;
-                ++listOfPC[i]->countConnect;
-                listOfSwitches[randSwitch]->toWhomConnected[listOfSwitches[randSwitch]->countConnect-1] = listOfPC[i]->address;
-                listOfPC[i]->toWhomConnected[listOfPC[i]->countConnect-1] = randSwitch;
+        if(listOfPC[i]->countConnect == 0) {
+            if (!randChoice) {
+                randSwitch = rand() % countOfSwitches;
+                if ((listOfSwitches[randSwitch]->countConnect < 4)) {
+                    ++listOfSwitches[randSwitch]->countConnect;
+                    ++listOfPC[i]->countConnect;
+                    listOfSwitches[randSwitch]->toWhomConnected[listOfSwitches[randSwitch]->countConnect-1] = listOfPC[i]->address;
+                    listOfPC[i]->toWhomConnected[0] = randSwitch;
+                }
+                else
+                    listOfPC[i]->toWhomConnected[0] = -1;
             }
-            else
-                listOfPC[i]->toWhomConnected[0] = -1;
-        }
-        if (randChoice) {
-            randPC = rand() % countOfPC + (countOfSwitches + countOfServers);
-            int temp = randPC - countOfServers - countOfSwitches;
-            vector<int>::iterator it = find(listOfPC[temp]->toWhomConnected.begin(), listOfPC[temp]->toWhomConnected.end(), listOfPC[i]->address);
-            if ((randPC != listOfPC[i]->address) && (it != listOfPC[i]->toWhomConnected.end())) {
-                ++listOfPC[i]->countConnect;
-                ++listOfPC[temp]->countConnect;
-                listOfPC[i]->toWhomConnected[listOfPC[i]->countConnect-1] = randPC;
-                listOfPC[temp]->toWhomConnected[listOfPC[temp]->countConnect-1] = listOfPC[i]->address;
+            if (randChoice) {
+                randPC = rand() % countOfPC + (countOfSwitches + countOfServers);
+                int temp = randPC - countOfServers - countOfSwitches;
+                if (listOfPC[temp]->countConnect == 0) {
+                    vector<int>::iterator it = find(listOfPC[temp]->toWhomConnected.begin(), listOfPC[temp]->toWhomConnected.end(), listOfPC[i]->address);
+                    if ((randPC != listOfPC[i]->address) && (it != listOfPC[i]->toWhomConnected.end())) {
+                        ++listOfPC[i]->countConnect;
+                        ++listOfPC[temp]->countConnect;
+                        listOfPC[i]->toWhomConnected[listOfPC[i]->countConnect-1] = randPC;
+                        listOfPC[temp]->toWhomConnected[listOfPC[temp]->countConnect-1] = listOfPC[i]->address;
+                    }
+                }
             }
         }
     }
@@ -150,7 +153,7 @@ int main()
             randPC = rand() % countOfPC + (countOfSwitches + countOfServers);
             randChoice = rand() % 2;
             if (!randChoice) {
-                if (listOfSwitches[randSwitch]->countConnect < 4) {
+                if ((listOfSwitches[randSwitch]->countConnect < 4) && (listOfSwitches[randSwitch]->address != listOfSwitches[i]->address)) {
                     ++listOfSwitches[randSwitch]->countConnect;
                     ++listOfSwitches[i]->countConnect;
                     listOfSwitches[randSwitch]->toWhomConnected[listOfSwitches[randSwitch]->countConnect-1] = i;
@@ -159,11 +162,11 @@ int main()
             }
             if (randChoice) {
                 temp = randPC-countOfSwitches-countOfServers;
-                if (find(listOfPC[temp]->toWhomConnected.begin(), listOfPC[temp]->toWhomConnected.end(), listOfSwitches[i]->address) == listOfPC[temp]->toWhomConnected.end()) {
+                if ((find(listOfPC[temp]->toWhomConnected.begin(), listOfPC[temp]->toWhomConnected.end(), listOfSwitches[i]->address) == listOfPC[temp]->toWhomConnected.end()) && (listOfPC[temp]->countConnect == 0)) {
                     ++listOfSwitches[i]->countConnect;
                     ++listOfPC[temp]->countConnect;
                     listOfSwitches[i]->toWhomConnected[listOfSwitches[i]->countConnect-1] = randPC;
-                    listOfPC[temp]->toWhomConnected[listOfPC[temp]->countConnect-1] = listOfSwitches[i]->address;
+                    listOfPC[temp]->toWhomConnected[0] = listOfSwitches[i]->address;
                 }
             }
         }
