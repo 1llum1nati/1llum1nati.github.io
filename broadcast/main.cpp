@@ -28,22 +28,38 @@ class RequestResponse {
 class Device : public RequestResponse {
     public:
         Device() {
-            toWhomConnected.reserve(8);
+            toWhomConnected.reserve(4);
         }
         void generateAddress(int generatedAddress) {
             address = generatedAddress;
         }
-        void makeConnection();
         void writeAddress();
 
         int address;
         vector<int > toWhomConnected;
 };
+class PC;
+
+class Switch : public Device {
+    public:
+        void countOfResponses();
+        void checkServer();
+        void makeNew(vector<Switch*> &listOfSwitches, Switch* tempSwitch, int addressGen) {
+            listOfSwitches.push_back(tempSwitch);
+            generateAddress(addressGen);
+        }
+        int countConnect = 0;
+        map<string, int> counter = {{"facebook", 0}, {"faceapp", 0}, {"tiktok", 0}};
+};
 
 class Server : public Device {
     public:
-        void makeConnection() {
-
+        void makeConnection(vector<Server*> &listOfServers, vector<Switch*> &listOfSwitches) {
+            for (int j = 0; j != 2; ++j) {
+                toWhomConnected.push_back(rand() % countOfSwitches);
+                ++listOfSwitches[toWhomConnected[j]]->countConnect;
+                listOfSwitches[toWhomConnected[j]]->toWhomConnected.push_back(address);
+            }
         }
         void generateAddress(int generatedAddress) {
             address = generatedAddress;
@@ -60,24 +76,23 @@ class Server : public Device {
                     break;
             }
         }
+        void makeNew(vector<Server*> &listOfServers, Server* tempServer, int addressGen) {
+            listOfServers.push_back(tempServer);
+            generateAddress(addressGen);
+        }
         void makeResponse();
         string name;
 };
 
-class Switch : public Device {
-    public:
-        void makeConnection();
-        void countOfResponses();
-        void checkServer();
-
-        int countConnect = 0;
-        map<string, int> counter = {{"facebook", 0}, {"faceapp", 0}, {"tiktok", 0}};
-};
 
 class PC : public Device {
     public:
         void makeConnection() {
 
+        }
+        void makeNew(vector<PC*> &listOfPC, PC* tempPC, int addressGen) {
+            listOfPC.push_back(tempPC);
+            generateAddress(addressGen);
         }
         int countConnect = 0;
 };
@@ -93,28 +108,20 @@ int main()
 
     for (int i = 0; i != countOfSwitches; ++i) {
         Switch *tempSwitch = new Switch;
-        listOfSwitches.push_back(tempSwitch);
-        listOfSwitches[i]->generateAddress(addressGen);
+        tempSwitch->makeNew(listOfSwitches, tempSwitch, addressGen);
         ++addressGen;
     }
+
     for (int i = 0; i != countOfServers; ++i) {
         Server *tempServer = new Server;
-        listOfServers.push_back(tempServer);
-        listOfServers[i]->generateAddress(addressGen);
+        tempServer->makeNew(listOfServers, tempServer, addressGen);
         ++addressGen;
-
-        for (int j = 0; j != 2; ++j) {
-            listOfServers[i]->toWhomConnected.push_back(rand() % countOfSwitches);
-            ++listOfSwitches[listOfServers[i]->toWhomConnected[j]]->countConnect;
-            listOfSwitches[listOfServers[i]->toWhomConnected[j]]->toWhomConnected.push_back(listOfServers[i]->address);
-        }
+        tempServer->makeConnection(listOfServers, listOfSwitches);
     }
 
     for (int i = 0; i != countOfPC; ++i) {
         PC *tempPC = new PC;
-        listOfPC.push_back(tempPC);
-
-        listOfPC[i]->generateAddress(addressGen);
+        tempPC->makeNew(listOfPC, tempPC, addressGen);
         ++addressGen;
     }
 
@@ -147,17 +154,36 @@ int main()
             }
         }
     }
+
     for (int i = 0; i != countOfSwitches; ++i) {
-        if (listOfSwitches[i]->countConnect < 4) {
+        while (listOfSwitches[i]->countConnect < 4) {
             randSwitch = rand() % countOfSwitches;
             randPC = rand() % countOfPC + (countOfSwitches + countOfServers);
             randChoice = rand() % 2;
+
             if (!randChoice) {
-                if ((listOfSwitches[randSwitch]->countConnect < 4) && (listOfSwitches[randSwitch]->address != listOfSwitches[i]->address)) {
-                    ++listOfSwitches[randSwitch]->countConnect;
-                    ++listOfSwitches[i]->countConnect;
-                    listOfSwitches[randSwitch]->toWhomConnected[listOfSwitches[randSwitch]->countConnect-1] = i;
-                    listOfSwitches[i]->toWhomConnected[listOfSwitches[i]->countConnect-1] = randSwitch;
+                //vector<int>::iterator it1 = find(listOfSwitches[randSwitch]->toWhomConnected.begin(), listOfSwitches[randSwitch]->toWhomConnected.end(), listOfSwitches[i]->address);
+                //vector<int>::iterator it2 = find(listOfSwitches[i]->toWhomConnected.begin(), listOfSwitches[i]->toWhomConnected.end(), listOfSwitches[randSwitch]->address);
+                if (listOfSwitches[randSwitch]->countConnect < 4) {
+                    int check = 0;
+                    for (int l = 0; l != listOfSwitches[i]->countConnect; ++l) {
+                        if (listOfSwitches[i]->toWhomConnected[l] == randSwitch)
+                            ++check;
+                    }
+                    for (int l = 0; l != listOfSwitches[randSwitch]->countConnect; ++l) {
+                        if (listOfSwitches[randSwitch]->toWhomConnected[l] == i)
+                            ++check;
+                    }
+                    if (check == 0) {
+                        if (listOfSwitches[randSwitch]->address != listOfSwitches[i]->address) {
+                            ++listOfSwitches[randSwitch]->countConnect;
+                            ++listOfSwitches[i]->countConnect;
+                            listOfSwitches[randSwitch]->toWhomConnected[listOfSwitches[randSwitch]->countConnect-1] = i;
+                            listOfSwitches[i]->toWhomConnected[listOfSwitches[i]->countConnect-1] = randSwitch;
+                        }
+                    }
+                    else
+                        break;
                 }
             }
             if (randChoice) {
