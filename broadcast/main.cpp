@@ -24,7 +24,7 @@ class RequestResponse {
         string request;
         string nameOfServer;
 };
-class Server; class Switch; class PC;
+class Server; class Switch; class PC; class Broadcast;
 class Device {
     public:
         Device() {
@@ -48,31 +48,13 @@ class Device {
 class Switch : public Device {
     public:
         void countOfResponses();
-        void makeConnection(vector<PC*> &listOfPC, vector<Switch*> &listOfSwitches, int i);
         void checkServer();
         map<string, int> counter = {{"facebook", 0}, {"faceapp", 0}, {"tiktok", 0}};
 };
 
 class Server : public Device {
     public:
-        void makeConnection(vector<Server*> &listOfServers, vector<Switch*> &listOfSwitches, int i) {
-            while(listOfServers[i]->countConnect < 2) {
-                int randSwitch = rand() % countOfSwitches;
-                if (listOfSwitches[randSwitch]->countConnect < 4) {
-                    int check = 0;
-                    for (int l = 0; l != listOfServers[i]->countConnect; ++l) {
-                        if (listOfServers[i]->toWhomConnected[l] == randSwitch)
-                            ++check;
-                    }
-                    if (check == 0) {
-                        toWhomConnected.push_back(listOfSwitches[randSwitch]->address);
-                        ++countConnect;
-                        ++listOfSwitches[randSwitch]->countConnect;
-                        listOfSwitches[randSwitch]->toWhomConnected.push_back(listOfServers[i]->address);
-                    }
-                }
-            }
-        }
+
         void generateAddress(int generatedAddress) {
             address = generatedAddress;
             cout << "Server's name: ";
@@ -85,78 +67,8 @@ class Server : public Device {
 
 class PC : public Device {
     public:
-        void makeConnection(vector<PC*> &listOfPC, vector<Switch*> &listOfSwitches, int i) {
-            int randChoice = rand() % 2;
-            if(listOfPC[i]->countConnect == 0) {
-                if (!randChoice) {
-                    int randSwitch = rand() % countOfSwitches;
-                    if ((listOfSwitches[randSwitch]->countConnect < 4)) {
-                        ++listOfSwitches[randSwitch]->countConnect;
-                        ++listOfPC[i]->countConnect;
-                        listOfSwitches[randSwitch]->toWhomConnected[listOfSwitches[randSwitch]->countConnect-1] = listOfPC[i]->address;
-                        listOfPC[i]->toWhomConnected[0] = randSwitch;
-                    }
-                    else
-                        listOfPC[i]->toWhomConnected[0] = -1;
-                }
-                if (randChoice) {
-                    int randPC = rand() % countOfPC;
-                    if (listOfPC[randPC]->countConnect == 0) {
-                        vector<int>::iterator it = find(listOfPC[randPC]->toWhomConnected.begin(), listOfPC[randPC]->toWhomConnected.end(), listOfPC[i]->address);
-                        if ((listOfPC[randPC]->address != listOfPC[i]->address) && (it != listOfPC[i]->toWhomConnected.end())) {
-                            ++listOfPC[i]->countConnect;
-                            ++listOfPC[randPC]->countConnect;
-                            listOfPC[i]->toWhomConnected[listOfPC[i]->countConnect-1] = listOfPC[randPC]->address;
-                            listOfPC[randPC]->toWhomConnected[listOfPC[randPC]->countConnect-1] = listOfPC[i]->address;
-                        }
-                    }
-                }
-            }
-        }
+
 };
-
-void Switch::makeConnection(vector<PC*> &listOfPC, vector<Switch*> &listOfSwitches, int i) {
-    while (listOfSwitches[i]->countConnect < 4) {
-        int randSwitch = rand() % countOfSwitches;
-        int randPC = rand() % countOfPC;
-        int randChoice = rand() % 2;
-
-        if (!randChoice) {
-            if (listOfSwitches[randSwitch]->countConnect < 4) {
-                int check = 0;
-                for (int l = 0; l != listOfSwitches[i]->countConnect; ++l) {
-                    if (listOfSwitches[i]->toWhomConnected[l] == randSwitch)
-                        ++check;
-                }
-                if (check == 0) {
-                    if (listOfSwitches[randSwitch]->address != listOfSwitches[i]->address) {
-                        ++listOfSwitches[randSwitch]->countConnect;
-                        ++listOfSwitches[i]->countConnect;
-                        listOfSwitches[randSwitch]->toWhomConnected[listOfSwitches[randSwitch]->countConnect-1] = i;
-                        listOfSwitches[i]->toWhomConnected[listOfSwitches[i]->countConnect-1] = randSwitch;
-                    }
-                }
-                else
-                    break;
-            }
-        }
-        if (randChoice) {
-            if (listOfPC[randPC]->countConnect == 0) {
-                int check = 0;
-                for (int l = 0; l != listOfPC[i]->countConnect; ++l) {
-                    if (listOfPC[i]->toWhomConnected[l] == randPC)
-                        ++check;
-                }
-                if (check == 0) {
-                    ++listOfSwitches[i]->countConnect;
-                    ++listOfPC[randPC]->countConnect;
-                    listOfSwitches[i]->toWhomConnected[listOfSwitches[i]->countConnect-1] = listOfPC[randPC]->address;
-                    listOfPC[randPC]->toWhomConnected[0] = listOfSwitches[i]->address;
-                }
-            }
-        }
-    }
-}
 
 class Broadcast {
 public:
@@ -174,16 +86,16 @@ public:
         makeDevices(listOfServers, addressGen, countOfServers);
         makeDevices(listOfPC, addressGen, countOfPC);
         for (int i = 0; i != countOfServers; ++i)
-            listOfServers[i]->makeConnection(listOfServers, listOfSwitches, i);
+            makeConnectionServer(listOfServers, listOfSwitches, i);
         for (int i = 0; i != countOfPC; ++i)
-            listOfPC[i]->makeConnection(listOfPC, listOfSwitches, i);
+            makeConnectionPC(listOfPC, listOfSwitches, i);
         for (int i = 0; i != countOfSwitches; ++i)
-            listOfSwitches[i]->makeConnection(listOfPC, listOfSwitches, i);
+            makeConnectionSwitch(listOfPC, listOfSwitches, i);
     }
 
     void showBroadcast(vector<PC*> listOfPC, vector<Switch*> listOfSwitches, vector<Server*> listOfServers) {
         for (auto &a: listOfSwitches) {
-            cout << "Switch n" << a->address << " ";
+            cout << "Switch " << a->address << " ";
             for (int i = 0; i != a->countConnect; ++i)
                 cout << a->toWhomConnected[i] << " ";
             cout << endl;
@@ -200,6 +112,94 @@ public:
                 cout << "no connection";
             cout << endl;
         }
+    }
+
+
+    void makeConnectionSwitch(vector<PC*> &listOfPC, vector<Switch*> &listOfSwitches, int i) {
+        while (listOfSwitches[i]->countConnect < 4) {
+            int randSwitch = rand() % countOfSwitches;
+            int randPC = rand() % countOfPC;
+            int randChoice = rand() % 2;
+
+            if (!randChoice) {
+                if (listOfSwitches[randSwitch]->countConnect < 4) {
+                        int checkCounter = check(listOfSwitches, randSwitch, i);
+                        if (!checkCounter) {
+                            if (listOfSwitches[randSwitch]->address != listOfSwitches[i]->address) {
+                                rememberConnection(listOfSwitches, listOfSwitches, randSwitch, i);
+                        }
+                    }
+                    else
+                        break;
+                }
+            }
+            if (randChoice) {
+                if (listOfPC[randPC]->countConnect == 0) {
+                    int checkCounter = check(listOfPC, randPC, i);
+                    if (!checkCounter) {
+                        rememberConnection(listOfSwitches, listOfPC, randPC, i);
+                    }
+                }
+            }
+        }
+    }
+
+    void makeConnectionPC(vector<PC*> &listOfPC, vector<Switch*> &listOfSwitches, int i) {
+        int randChoice = rand() % 2;
+        if(listOfPC[i]->countConnect == 0) {
+            if (!randChoice) {
+                int randSwitch = rand() % countOfSwitches;
+                if ((listOfSwitches[randSwitch]->countConnect < 4)) {
+                    int checkCounter = check(listOfPC, randSwitch, i);
+                    if (!checkCounter) {
+                        rememberConnection(listOfPC, listOfSwitches, randSwitch, i);
+                    }
+                }
+                else
+                    listOfPC[i]->toWhomConnected[0] = -1;
+            }
+            if (randChoice) {
+                int randPC = rand() % countOfPC;
+                if (listOfPC[randPC]->address != listOfPC[i]->address) {
+                    if (listOfPC[randPC]->countConnect == 0) {
+                        int checkCounter = check(listOfPC, randPC, i);
+                        if (!checkCounter) {
+                            rememberConnection(listOfPC, listOfPC, randPC, i);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    void makeConnectionServer(vector<Server*> &listOfServers, vector<Switch*> &listOfSwitches, int i) {
+        while(listOfServers[i]->countConnect < 2) {
+            int randSwitch = rand() % countOfSwitches;
+            if (listOfSwitches[randSwitch]->countConnect < 4) {
+                int checkCounter = check(listOfServers, randSwitch, i);
+                if (!checkCounter) {
+                    rememberConnection(listOfServers, listOfSwitches, randSwitch, i);
+                }
+            }
+        }
+    }
+
+    template <typename T1, typename T2>
+    void rememberConnection(vector<T1*> listOfDevices, vector<T2*> listOfDevices2, int randDevice, int i) {
+        ++listOfDevices[i]->countConnect;
+        ++listOfDevices2[randDevice]->countConnect;
+        listOfDevices[i]->toWhomConnected[listOfDevices[i]->countConnect-1] = listOfDevices2[randDevice]->address;
+        listOfDevices2[randDevice]->toWhomConnected[listOfDevices2[randDevice]->countConnect-1] = listOfDevices[i]->address;
+    }
+
+    template <typename T>
+    int check(vector<T*> listOfDevices, int randDevice, int i) {
+        int checkCounter = 0;
+        for (int l = 0; l != listOfDevices[i]->countConnect; ++l) {
+            if (listOfDevices[i]->toWhomConnected[l] == randDevice)
+                ++checkCounter;
+        }
+        return checkCounter;
     }
 
     void clearMemory(vector<PC*> listOfPC, vector<Switch*> listOfSwitches, vector<Server*> listOfServers) {
