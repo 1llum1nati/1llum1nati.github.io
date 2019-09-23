@@ -24,6 +24,7 @@ class RequestResponse {
         string request;
         string nameOfServer;
 };
+
 class Server; class Switch; class PC; class Broadcast;
 class Device {
     public:
@@ -114,7 +115,6 @@ public:
         }
     }
 
-
     void makeConnectionSwitch(vector<PC*> &listOfPC, vector<Switch*> &listOfSwitches, int i) {
         while (listOfSwitches[i]->countConnect < 4) {
             int randSwitch = rand() % countOfSwitches;
@@ -185,11 +185,11 @@ public:
     }
 
     template <typename T1, typename T2>
-    void rememberConnection(vector<T1*> listOfDevices, vector<T2*> listOfDevices2, int randDevice, int i) {
-        ++listOfDevices[i]->countConnect;
+    void rememberConnection(vector<T1*> listOfDevices1, vector<T2*> listOfDevices2, int randDevice, int i) {
+        ++listOfDevices1[i]->countConnect;
         ++listOfDevices2[randDevice]->countConnect;
-        listOfDevices[i]->toWhomConnected[listOfDevices[i]->countConnect-1] = listOfDevices2[randDevice]->address;
-        listOfDevices2[randDevice]->toWhomConnected[listOfDevices2[randDevice]->countConnect-1] = listOfDevices[i]->address;
+        listOfDevices1[i]->toWhomConnected[listOfDevices1[i]->countConnect-1] = listOfDevices2[randDevice]->address;
+        listOfDevices2[randDevice]->toWhomConnected[listOfDevices2[randDevice]->countConnect-1] = listOfDevices1[i]->address;
     }
 
     template <typename T>
