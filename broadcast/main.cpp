@@ -123,10 +123,10 @@ public:
 
             if (!randChoice) {
                 if (listOfSwitches[randSwitch]->countConnect < 4) {
-                        int checkCounter = check(listOfSwitches, randSwitch, i);
-                        if (!checkCounter) {
-                            if (listOfSwitches[randSwitch]->address != listOfSwitches[i]->address) {
-                                rememberConnection(listOfSwitches, listOfSwitches, randSwitch, i);
+                    int checkCounter = check(listOfSwitches, randSwitch, i);
+                    if (!checkCounter) {
+                        if (listOfSwitches[randSwitch]->address != listOfSwitches[i]->address) {
+                            rememberConnection(listOfSwitches, listOfSwitches, randSwitch, i);
                         }
                     }
                     else
