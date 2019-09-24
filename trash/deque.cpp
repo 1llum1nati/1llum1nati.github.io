@@ -154,7 +154,7 @@ int main()
         Example.init(sizeOfDeque);
         std::cout << "Stack has been initialized!\n";
     }
-    while(choice != 10) {
+    while(choice != 11) {
         std::cout << "Enter number:\n" <<
             "1 - push_front\n" <<
             "2 - push_back\n" <<
@@ -165,7 +165,8 @@ int main()
             "7 - check back\n" <<
             "8 - get value\n" <<
             "9 - set value\n" <<
-            "10 - stop\n" <<
+            "10 - check empty\n" <<
+            "11 - stop\n" <<
             "> ";
         std::cin >> choice;
         if (choice == 1) {
@@ -210,6 +211,9 @@ int main()
             std::cout << "Type value" << std::endl;
             std::cin >> tempValue;
             Example[tempIndex] = tempValue;
+        }
+        if (choice == 10) {
+            Example.isEmpty();
         }
     }
 
