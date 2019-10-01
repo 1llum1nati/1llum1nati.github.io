@@ -116,7 +116,7 @@ protected:
 
 };
 
-class DequeD : protected Deque {
+class DequeD : public Deque {
 public:
     void push_frontD(int number) { push_front(number); }
     void push_backD(int number) { push_back(number); }
@@ -127,11 +127,12 @@ public:
     void checkValueD() { checkValue(); }
     void frontD() { front(); }
     void backD() { back(); }
+    int size() { return sizeOfDeque; }
     int &operator[] (int index);
     int tempInt = -1;
 };
 int &DequeD::operator[] (int index) {
-    assert(index < sizeOfDeque);
+    //assert(index < sizeOfDeque);
     if (index < sizeOfDeque) {
         Node *Temp = head;
         for(int i = 0; i < index; ++i) {
@@ -209,15 +210,23 @@ int main()
             int tempIndex;
             std::cout << "Type index" << std::endl;
             std::cin >> tempIndex;
-            std::cout << Example[tempIndex] << std::endl;
+            if (tempIndex > 0 && tempIndex < Example.size()) {
+                std::cout << Example[tempIndex] << std::endl;
+            }
+            else
+                std::cout << "error" << std::endl;
         }
         if (choice == 9) {
             int tempIndex, tempValue;
             std::cout << "Type index" << std::endl;
             std::cin >> tempIndex;
-            std::cout << "Type value" << std::endl;
-            std::cin >> tempValue;
-            Example[tempIndex] = tempValue;
+            if (tempIndex > 0 && tempIndex < Example.size()) {
+                std::cout << "Type value" << std::endl;
+                std::cin >> tempValue;
+                Example[tempIndex] = tempValue;
+            }
+            else
+                std::cout << "error" << std::endl;
         }
         if (choice == 10) {
             Example.isEmptyD();
