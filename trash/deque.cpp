@@ -10,7 +10,7 @@ public:
 };
 
 class Deque {
-public:
+protected:
     Node *head = NULL;
     Node *tail = NULL;
     int sizeOfDeque = 0;
@@ -55,30 +55,24 @@ public:
         ++sizeOfDeque;
     }
 
-    int pop_front() {
+    void pop_front() {
         if (sizeOfDeque > 0) {
-            int tempInt = head->value;
             Node *Temp = new Node;
             Temp = head;
             head = head->next;
             delete Temp;
-            std::cout << tempInt << std::endl;
             --sizeOfDeque;
-            return tempInt;
         }
         else
             std::cout << "Deque is empty!" << std::endl;
     }
-    int pop_back() {
+    void pop_back() {
         if (sizeOfDeque > 0) {
-            int tempInt = tail->value;
             Node *Temp = new Node;
             Temp = tail;
             tail = tail->prev;
             delete Temp;
-            std::cout << tempInt << std::endl;
             --sizeOfDeque;
-            return tempInt;
         }
         else
             std::cout << "Deque is empty!" << std::endl;
@@ -119,11 +113,24 @@ public:
     void back() {
         std::cout << tail->value << std::endl;
     }
+
+};
+
+class DequeD : protected Deque {
+public:
+    void push_frontD(int number) { push_front(number); }
+    void push_backD(int number) { push_back(number); }
+    void pop_frontD() { pop_front(); }
+    void pop_backD() { pop_back(); }
+    void isEmptyD() { isEmpty(); }
+    void initD(int sizeOfDeque) { init(sizeOfDeque); }
+    void checkValueD() { checkValue(); }
+    void frontD() { front(); }
+    void backD() { back(); }
     int &operator[] (int index);
     int tempInt = -1;
 };
-
-int &Deque::operator[] (int index) {
+int &DequeD::operator[] (int index) {
     assert(index < sizeOfDeque);
     if (index < sizeOfDeque) {
         Node *Temp = head;
@@ -143,7 +150,7 @@ int &Deque::operator[] (int index) {
 int main()
 {
     srand(time(NULL));
-    Deque Example;
+    DequeD Example;
     int choice = 0, choiceInit = 0;
     std::cout << "Type any number to init the deque, 0 to continue\n";
     std::cin >> choiceInit;
@@ -151,7 +158,7 @@ int main()
         std::cout << "Size?\n";
         int sizeOfDeque;
         std::cin >> sizeOfDeque;
-        Example.init(sizeOfDeque);
+        Example.initD(sizeOfDeque);
         std::cout << "Stack has been initialized!\n";
     }
     while(choice != 11) {
@@ -173,30 +180,30 @@ int main()
             std::cout << "Type any integer number: ";
             int number;
             std::cin >> number;
-            Example.push_front(number);
+            Example.push_frontD(number);
         }
         if (choice == 2) {
             std::cout << "Type any integer number: ";
             int number;
             std::cin >> number;
-            Example.push_back(number);
+            Example.push_backD(number);
         }
         if (choice == 3) {
             std::cout << "Last front value was: ";
-            Example.pop_front();
+            Example.pop_frontD();
         }
         if (choice == 4) {
             std::cout << "Last back value was: ";
-            Example.pop_back();
+            Example.pop_backD();
         }
         if (choice == 5) {
-            Example.checkValue();
+            Example.checkValueD();
         }
         if (choice == 6) {
-            Example.front();
+            Example.frontD();
         }
         if (choice == 7) {
-            Example.back();
+            Example.backD();
         }
         if (choice == 8) {
             int tempIndex;
@@ -213,7 +220,7 @@ int main()
             Example[tempIndex] = tempValue;
         }
         if (choice == 10) {
-            Example.isEmpty();
+            Example.isEmptyD();
         }
     }
 
