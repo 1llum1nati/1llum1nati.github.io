@@ -118,13 +118,13 @@
                 var answers = document.querySelectorAll(".answer");
                 function modify() {
                     ++counterQuestions;
-                    ++counterAnswers;
                     if (counterQuestions == 2) {
                         questions[counterQuestions].classList.remove('hidden');
                         ++counterQuestions;
                     }
                     button2.classList.add('hidden');
                     answers[counterAnswers].classList.remove('hidden');
+                    ++counterAnswers;
                     questions[counterQuestions].classList.remove('hidden');
                     chat.scrollTop = chat.scrollHeight;
                 }
