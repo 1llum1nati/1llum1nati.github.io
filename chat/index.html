@@ -100,20 +100,15 @@
                     <div id="button1" class="button">
                         <p class="buttonText">Ага...</p>
                     </div>
-                    <div id="button2" class="button">
-                        <p class="buttonText">Да</p>
-                    </div>
                 </div>
             </div>
             <script>
                 var button1 = document.getElementById('button1');
-                var button2 = document.getElementById('button2');
                 var chat = document.getElementById('chat');
 
                 var counterQuestions = 0;
                 var counterAnswers = 0;
                 button1.addEventListener("click", modify, false);
-                button2.addEventListener("click", modify, false);
                 var questions = document.querySelectorAll(".question");
                 var answers = document.querySelectorAll(".answer");
                 function modify() {
@@ -122,7 +117,6 @@
                         questions[counterQuestions].classList.remove('hidden');
                         ++counterQuestions;
                     }
-                    button2.classList.add('hidden');
                     answers[counterAnswers].classList.remove('hidden');
                     ++counterAnswers;
                     questions[counterQuestions].classList.remove('hidden');
