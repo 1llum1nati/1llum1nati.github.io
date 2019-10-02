@@ -103,6 +103,8 @@
             <script>
                 var button1 = document.getElementById('button1');
                 var button2 = document.getElementById('button2');
+                var chat = document.getElementById('chat');
+
                 var counter = 0;
                 button1.addEventListener("click", modify, false);
                 button2.addEventListener("click", modify, false);
@@ -111,6 +113,7 @@
                     ++counter;
                     button2.classList.add('hidden');
                     temp[counter].classList.remove('hidden');
+                    chat.scrollTop = chat.scrollHeight;
                 }
             </script>
         </section>
