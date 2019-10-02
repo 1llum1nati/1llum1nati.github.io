@@ -120,7 +120,7 @@
                         ++counterQuestions;
                     }
                     answers[counterAnswers].classList.remove('hidden');
-                    if (answers < 3) {
+                    if (counterAnswers < 3) {
                         buttonText.innerHTML = answers[counterAnswers+1].textContent;
                     }
                     ++counterAnswers;
