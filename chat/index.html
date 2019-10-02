@@ -100,7 +100,16 @@
                     </div>
                 </div>
             </div>
-
+            <script>
+                var button1 = document.getElementById('button1');
+                var counter = 0;
+                button1.addEventListener("click", modify, false);
+                var temp = document.querySelectorAll(".question");
+                function modify() {
+                    ++counter;
+                    temp[counter].classList.remove('hidden');
+                }
+            </script>
         </section>
 
     </body>
