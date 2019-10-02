@@ -61,7 +61,7 @@
                         что подарить? (Нужно выбрать ответ)
                     </p>
                 </div>
-                <div class="answer">
+                <div class="answer hidden">
                     <p class="text">
                         Ага
                     </p>
@@ -86,6 +86,11 @@
                         Мужчине придется потрудиться, чтобы добраться до подарка.
                     </p>
                 </div>
+                <div class="answer hidden">
+                    <p class="text">
+                        А какие есть наборы?
+                    </p>
+                </div>
                 <div id="fifthQuestion" class="question hidden">
                     <p class="text">
                         Ниже есть каталог
@@ -108,9 +113,14 @@
                 var counter = 0;
                 button1.addEventListener("click", modify, false);
                 button2.addEventListener("click", modify, false);
-                var temp = document.querySelectorAll(".question");
+                var questions = document.querySelectorAll(".question");
+                var answers = document.querySelectorAll(".question");
                 function modify() {
                     ++counter;
+                    if (counter == 3) {
+                        temp[counter].classList.remove('hidden');
+                        ++counter;
+                    }
                     button2.classList.add('hidden');
                     temp[counter].classList.remove('hidden');
                     chat.scrollTop = chat.scrollHeight;
