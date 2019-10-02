@@ -46,7 +46,7 @@
             margin-right: 2%;
             border-radius: 40px;
         }
-        p.buttonText {
+        p#buttonText {
             padding: 0px 30px;
         }
         p.text {
@@ -98,14 +98,14 @@
                 </div>
                 <div id="buttons">
                     <div id="button1" class="button">
-                        <p class="buttonText">Ага...</p>
+                        <p id="buttonText">Ага...</p>
                     </div>
                 </div>
             </div>
             <script>
                 var button1 = document.getElementById('button1');
                 var chat = document.getElementById('chat');
-                var buttonText = document.getElementsByClassName('buttonText');
+                var buttonText = document.getElementsById('buttonText');
 
                 var counterQuestions = 0;
                 var counterAnswers = 0;
@@ -120,7 +120,7 @@
                         ++counterQuestions;
                     }
                     answers[counterAnswers].classList.remove('hidden');
-                    buttonText.textContent = answers[counterAnswers+1].textContent;
+                    buttonText.innerHTML = answers[counterAnswers+1].textContent;
                     ++counterAnswers;
                     questions[counterQuestions].classList.remove('hidden');
                     chat.scrollTop = chat.scrollHeight;
