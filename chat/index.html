@@ -1,0 +1,106 @@
+<html>
+    <body>
+        <style>
+        body {
+            margin: 0;
+            font-size: 16px;
+        }
+        section.sectionChat {
+            min-height: 30vh;
+            background-color: red;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+        div#chat {
+            display: flex;
+            flex-direction: column;
+            min-height: inherit;
+            min-width: 70vw;
+            background-color: green;
+        }
+        div.question {
+            background-color: blue;
+            max-width: 40%;
+            margin-top: 5%;
+            border-radius: 40px;
+        }
+        div.answer {
+            background-color: blue;
+            max-width: 40%;
+            align-self: flex-end;
+            margin-top: 5%;
+            border-radius: 40px;
+        }
+        .hidden {
+            display: none;
+        }
+        div#buttons {
+            display: flex;
+            flex-direction: row;
+            margin-top: 5%;
+        }
+        div.button {
+            background-color: blueviolet;
+            margin-right: 2%;
+            border-radius: 40px;
+        }
+        p.buttonText {
+            padding: 0px 30px;
+        }
+        p.text {
+            padding: 5px 30px;
+        }
+        </style>
+        <section class="sectionChat">
+            <div id="chat">
+                <div class="question">
+                    <p class="text">
+                        Скоро день рождения мужчины/годовщина/Новый Год, и вы не знаете,
+                        что подарить? (Нужно выбрать ответ)
+                    </p>
+                </div>
+                <div class="answer hidden">
+                    <p class="text">
+                        Ага
+                    </p>
+                </div>
+                <div id="secondQuestion" class="question hidden">
+                    <p class="text">
+                        Подарите Black Box, такой подарок запомнится надолго!
+                    </p>
+                </div>
+                <div class="answer hidden">
+                    <p class="text">
+                        Что такое Black Box?
+                    </p>
+                </div>
+                <div id="thirdQuestion" class="question hidden">
+                    <p class="text">
+                        Black Box - мужские подарочные наборы в заколоченных деревеннях ящиках.
+                    </p>
+                </div>
+                <div id="fourthQuestion"class="question hidden">
+                    <p class="text">
+                        Мужчине придется потрудиться, чтобы добраться до подарка.
+                    </p>
+                </div>
+                <div id="fifthQuestion" class="question hidden">
+                    <p class="text">
+                        Ниже есть каталог
+                    </p>
+                </div>
+                <div id="buttons">
+                    <div id="button1" class="button">
+                        <p class="buttonText">Ага...</p>
+                    </div>
+                    <div id="button2" class="button">
+                        <p class="buttonText">Да</p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </body>
+</html>
