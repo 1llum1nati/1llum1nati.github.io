@@ -118,7 +118,7 @@
                         ++counterQuestions;
                     }
                     answers[counterAnswers].classList.remove('hidden');
-                    button1.innerHTML = answers[counterAnswers].textContent;
+                    button1.textContent = answers[counterAnswers+1].textContent;
                     ++counterAnswers;
                     questions[counterQuestions].classList.remove('hidden');
                     chat.scrollTop = chat.scrollHeight;
