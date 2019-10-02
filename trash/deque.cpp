@@ -93,7 +93,7 @@ protected:
             std::cout << "Deque is not empty!" << std::endl;
     }
 
-    void checkValue() {
+    void checkValues() {
         if (!sizeOfDeque)
             std::cout << "Deque is empty!" << std::endl;
         else {
@@ -124,7 +124,7 @@ public:
     void pop_backD() { pop_back(); }
     void isEmptyD() { isEmpty(); }
     void initD(int sizeOfDeque) { init(sizeOfDeque); }
-    void checkValueD() { checkValue(); }
+    void checkValuesD() { checkValues(); }
     void frontD() { front(); }
     void backD() { back(); }
     int size() { return sizeOfDeque; }
@@ -190,7 +190,7 @@ int main()
             Example.pop_backD();
         }
         if (choice == 5) {
-            Example.checkValueD();
+            Example.checkValuesD();
         }
         if (choice == 6) {
             Example.frontD();
