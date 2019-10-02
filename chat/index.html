@@ -105,10 +105,12 @@
             <script>
                 var button1 = document.getElementById('button1');
                 var chat = document.getElementById('chat');
+                var buttonText = document.getElementsByClassName('buttonText');
 
                 var counterQuestions = 0;
                 var counterAnswers = 0;
                 button1.addEventListener("click", modify, false);
+                
                 var questions = document.querySelectorAll(".question");
                 var answers = document.querySelectorAll(".answer");
                 function modify() {
@@ -118,7 +120,7 @@
                         ++counterQuestions;
                     }
                     answers[counterAnswers].classList.remove('hidden');
-                    button1.innerHTML = answers[counterAnswers+1].outerHTML;
+                    buttonText.textContent = answers[counterAnswers+1].textContent;
                     ++counterAnswers;
                     questions[counterQuestions].classList.remove('hidden');
                     chat.scrollTop = chat.scrollHeight;
