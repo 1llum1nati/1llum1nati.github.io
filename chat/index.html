@@ -119,6 +119,7 @@
                 }
                 async function modify() {
                     button1.classList.add('hidden');
+                    answers[counterAnswers].classList.remove('hidden');
                     ++counterQuestions;
                     ++counterAnswers;
                     if (counterQuestions == 2) {
@@ -131,7 +132,6 @@
                     if (counterAnswers < 2) {
                         buttonText.innerHTML = answers[counterAnswers+1].textContent;
                     }
-                    answers[counterAnswers].classList.remove('hidden');
                     chat.scrollTop = chat.scrollHeight;
                     if (counterQuestions != 4) {
                         button1.classList.remove('hidden');
