@@ -114,6 +114,9 @@
                 
                 var questions = document.querySelectorAll(".question");
                 var answers = document.querySelectorAll(".answer");
+                function sleep(ms) {
+                    return new Promise(resolve => setTimeout(resolve, ms));
+                }
                 async function modify() {
                     ++counterQuestions;
                     await sleep(1000);
