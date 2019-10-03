@@ -114,7 +114,7 @@
                 
                 var questions = document.querySelectorAll(".question");
                 var answers = document.querySelectorAll(".answer");
-                function modify() {
+                async function modify() {
                     ++counterQuestions;
                     await sleep(1000);
                     if (counterQuestions == 2) {
