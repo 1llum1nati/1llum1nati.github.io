@@ -24,9 +24,6 @@
             max-width: 65%;
             margin-left: 5%;
             border-radius: 0px 40px 40px 40px;
-            opacity: 0;
-            display: none;
-            transition: opacity .25s ease-in-out;
         }
         div.answer {
             background-color: blue;
@@ -34,10 +31,11 @@
             margin-top: 5%;
             max-width: 40%;
             margin-right: 5%;
-            display: none;
-            opacity: 0;
             text-align: right;
             border-radius: 40px 0px 40px 40px;
+        }
+        .hidden {
+            display: none;
         }
         div#buttons {
             display: flex;
@@ -48,9 +46,6 @@
             background-color: blueviolet;
             margin-right: 2%;
             border-radius: 40px;
-        }
-        .hidden {
-            display: none;
         }
         p#buttonText {
             padding: 0px 30px;
@@ -67,37 +62,37 @@
                         что подарить? (Нужно выбрать ответ)
                     </p>
                 </div>
-                <div class="answer">
+                <div class="answer hidden">
                     <p class="text">
                         Ага
                     </p>
                 </div>
-                <div id="secondQuestion" class="question">
+                <div id="secondQuestion" class="question hidden">
                     <p class="text">
                         Подарите Black Box, такой подарок запомнится надолго!
                     </p>
                 </div>
-                <div class="answer">
+                <div class="answer hidden">
                     <p class="text">
                         Что такое Black Box?
                     </p>
                 </div>
-                <div id="thirdQuestion" class="question">
+                <div id="thirdQuestion" class="question hidden">
                     <p class="text">
                         Black Box - мужские подарочные наборы в заколоченных деревеннях ящиках.
                     </p>
                 </div>
-                <div id="fourthQuestion"class="question">
+                <div id="fourthQuestion"class="question hidden">
                     <p class="text">
                         Мужчине придется потрудиться, чтобы добраться до подарка.
                     </p>
                 </div>
-                <div class="answer">
+                <div class="answer hidden">
                     <p class="text">
                         А какие есть наборы?
                     </p>
                 </div>
-                <div id="fifthQuestion" class="question">
+                <div id="fifthQuestion" class="question hidden">
                     <p class="text">
                         Ниже есть каталог
                     </p>
@@ -124,18 +119,16 @@
                 }
                 async function modify() {
                     button1.classList.add('hidden');
-                    answers[counterAnswers].style.display = 'block';
-
+                    answers[counterAnswers].classList.remove('hidden');
                     ++counterQuestions;
                     ++counterAnswers;
                     if (counterQuestions == 2) {
                         await sleep(1000);
-                        questions[counterQuestions].style.display = 'block';
+                        questions[counterQuestions].classList.remove('hidden');
                         ++counterQuestions;
                     }
                     await sleep(1000);
-                    questions[counterQuestions].style.display = 'block';
-
+                    questions[counterQuestions].classList.remove('hidden');
                     if (counterAnswers < 2) {
                         buttonText.innerHTML = answers[counterAnswers+1].textContent;
                     }
