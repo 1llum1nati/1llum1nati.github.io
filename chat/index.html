@@ -24,6 +24,8 @@
             max-width: 65%;
             margin-left: 5%;
             border-radius: 0px 40px 40px 40px;
+            animation-name: display;
+            animation-duration: 1s;
         }
         div.answer {
             background-color: blue;
@@ -34,12 +36,11 @@
             text-align: right;
             border-radius: 40px 0px 40px 40px;
             animation-name: display;
-            animation-duration: 2s;
+            animation-duration: 1s;
         }
         @keyframes display {
             0% {opacity: 0;}
-            30% {opacity: 0.3;}
-            60% {opacity: 0.6;}
+            50% {opacity: 0.5;}
             100% {opacity: 1;}
         }
         .hidden {
