@@ -133,15 +133,18 @@
                 async function modify() {
                     button1.classList.add('hidden');
                     answers[counterAnswers].classList.remove('hidden');
+                    window.scrollTo(0, chat.scrollHeight);
                     ++counterQuestions;
                     
                     if (counterQuestions == 2) {
                         await sleep(1000);
                         questions[counterQuestions].classList.remove('hidden');
+                        window.scrollTo(0, chat.scrollHeight);
                         ++counterQuestions;
                     }
                     await sleep(1000);
                     questions[counterQuestions].classList.remove('hidden');
+                    window.scrollTo(0, chat.scrollHeight);
                     if (counterAnswers < 2) {
                         buttonText.innerHTML = answers[counterAnswers+1].textContent;
                     }
@@ -151,7 +154,6 @@
                         await sleep(1000);
                         button1.classList.remove('hidden');
                     }
-                    window.scrollTo(0, chat.scrollHeight);
                 }
             </script>
         </section>
