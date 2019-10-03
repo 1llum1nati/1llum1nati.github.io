@@ -118,23 +118,24 @@
                     return new Promise(resolve => setTimeout(resolve, ms));
                 }
                 async function modify() {
+                    button1.classList.add('hidden');
                     ++counterQuestions;
-                    answers[counterAnswers].classList.remove('hidden');
-                    if (counterAnswers < 2) {
-                        buttonText.innerHTML = answers[counterAnswers+1].textContent;
-                    }
                     ++counterAnswers;
                     if (counterQuestions == 2) {
                         await sleep(1000);
                         questions[counterQuestions].classList.remove('hidden');
                         ++counterQuestions;
                     }
-                    if (counterQuestions == 4) {
-                        button1.classList.add('hidden');
-                    }
                     await sleep(1000);
                     questions[counterQuestions].classList.remove('hidden');
+                    if (counterAnswers < 2) {
+                        buttonText.innerHTML = answers[counterAnswers+1].textContent;
+                    }
+                    answers[counterAnswers].classList.remove('hidden');
                     chat.scrollTop = chat.scrollHeight;
+                    if (counterQuestions != 4) {
+                        button1.classList.remove('hidden');
+                    }
                 }
             </script>
         </section>
