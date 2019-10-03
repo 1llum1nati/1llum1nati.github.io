@@ -34,6 +34,8 @@
             margin-top: 5%;
             max-width: 40%;
             margin-right: 5%;
+            display: none;
+            opacity: 0;
             text-align: right;
             border-radius: 40px 0px 40px 40px;
         }
@@ -123,18 +125,17 @@
                 async function modify() {
                     button1.classList.add('hidden');
                     answers[counterAnswers].style.display = 'block';
-                    answers[counterAnswers].style.opacity = 1;
+
                     ++counterQuestions;
                     ++counterAnswers;
                     if (counterQuestions == 2) {
                         await sleep(1000);
                         questions[counterQuestions].style.display = 'block';
-                        questions[counterQuestions].style.opacity = 1;
                         ++counterQuestions;
                     }
                     await sleep(1000);
                     questions[counterQuestions].style.display = 'block';
-                    questions[counterQuestions].style.opacity = 1;
+
                     if (counterAnswers < 2) {
                         buttonText.innerHTML = answers[counterAnswers+1].textContent;
                     }
