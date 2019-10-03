@@ -129,20 +129,22 @@
                 var answers = document.querySelectorAll(".answer");
                 function sleep(ms) {
                     return new Promise(resolve => setTimeout(resolve, ms));
-                    chat.scrollTop = chat.scrollHeight;
                 }
                 async function modify() {
                     button1.classList.add('hidden');
                     answers[counterAnswers].classList.remove('hidden');
+                    answers[counterAnswers].scrollTop = answers[counterAnswers].scrollHeight;
                     ++counterQuestions;
                     ++counterAnswers;
                     if (counterQuestions == 2) {
                         await sleep(1000);
                         questions[counterQuestions].classList.remove('hidden');
+                        questions[counterQuestions].scrollTop = questions[counterQuestions].scrollHeight;
                         ++counterQuestions;
                     }
                     await sleep(1000);
                     questions[counterQuestions].classList.remove('hidden');
+                    questions[counterQuestions].scrollTop = questions[counterQuestions].scrollHeight;
                     if (counterAnswers < 2) {
                         buttonText.innerHTML = answers[counterAnswers+1].textContent;
                     }
