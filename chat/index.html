@@ -124,7 +124,7 @@
                 var counterQuestions = 0;
                 var counterAnswers = 0;
                 button1.addEventListener("click", modify, false);
-                
+                chat.scrollTop = chat.scrollHeight;
                 var questions = document.querySelectorAll(".question");
                 var answers = document.querySelectorAll(".answer");
                 function sleep(ms) {
@@ -145,7 +145,7 @@
                     if (counterAnswers < 2) {
                         buttonText.innerHTML = answers[counterAnswers+1].textContent;
                     }
-                    chat.scrollTop = chat.scrollHeight;
+                    
                     if (counterQuestions != 4) {
                         await sleep(1000);
                         button1.classList.remove('hidden');
