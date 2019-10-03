@@ -119,9 +119,10 @@
                 }
                 async function modify() {
                     ++counterQuestions;
-                    await sleep(1000);
+                    
                     if (counterQuestions == 2) {
                         questions[counterQuestions].classList.remove('hidden');
+                        await sleep(1000);
                         ++counterQuestions;
                     }
                     answers[counterAnswers].classList.remove('hidden');
@@ -129,11 +130,12 @@
                         buttonText.innerHTML = answers[counterAnswers+1].textContent;
                     }
                     ++counterAnswers;
-                    questions[counterQuestions].classList.remove('hidden');
-                    chat.scrollTop = chat.scrollHeight;
                     if (counterQuestions == 4) {
                         button1.classList.add('hidden');
                     }
+                    await sleep(1000);
+                    questions[counterQuestions].classList.remove('hidden');
+                    chat.scrollTop = chat.scrollHeight;
                 }
             </script>
         </section>
