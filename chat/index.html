@@ -129,9 +129,9 @@
                 var answers = document.querySelectorAll(".answer");
                 function sleep(ms) {
                     return new Promise(resolve => setTimeout(resolve, ms));
+                    chat.scrollTop = chat.scrollHeight;
                 }
                 async function modify() {
-                    console.log(chat.scrollHeight);
                     button1.classList.add('hidden');
                     answers[counterAnswers].classList.remove('hidden');
                     ++counterQuestions;
