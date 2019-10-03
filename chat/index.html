@@ -135,7 +135,7 @@
                     button1.classList.add('hidden');
                     answers[counterAnswers].classList.remove('hidden');
                     ++counterQuestions;
-                    ++counterAnswers;
+                    
                     if (counterQuestions == 2) {
                         await sleep(1000);
                         questions[counterQuestions].classList.remove('hidden');
@@ -146,6 +146,7 @@
                     if (counterAnswers < 2) {
                         buttonText.innerHTML = answers[counterAnswers+1].textContent;
                     }
+                    ++counterAnswers;
                     
                     if (counterQuestions != 4) {
                         await sleep(1000);
