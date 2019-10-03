@@ -6,7 +6,7 @@
             font-size: 25px;
             font-family: Montserrat;
         }
-        section.sectionChat {
+        section#sectionChat {
             background-color: #fff;
             display: flex;
             align-items: center;
@@ -67,7 +67,7 @@
             padding: 5px 50px;
         }
         </style>
-        <section class="sectionChat">
+        <section id="sectionChat">
             <div id="chat">
                 <div class="question">
                     <p class="text">
@@ -118,7 +118,7 @@
             </div>
             <script>
                 var button1 = document.getElementById('button1');
-                var chat = document.getElementById('chat');
+                var chat = document.getElementById('sectionChat');
                 var buttonText = document.getElementById('buttonText');
 
                 var counterQuestions = 0;
