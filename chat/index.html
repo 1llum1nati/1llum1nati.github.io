@@ -24,7 +24,6 @@
             max-width: 65%;
             margin-left: 5%;
             border-radius: 0px 40px 40px 40px;
-            transition-delay: 1000ms;
         }
         div.answer {
             background-color: blue;
@@ -117,6 +116,7 @@
                 var answers = document.querySelectorAll(".answer");
                 function modify() {
                     ++counterQuestions;
+                    await sleep(1000);
                     if (counterQuestions == 2) {
                         questions[counterQuestions].classList.remove('hidden');
                         ++counterQuestions;
