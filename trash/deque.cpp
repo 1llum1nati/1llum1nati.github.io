@@ -133,11 +133,20 @@ public:
 };
 int &DequeD::operator[] (int index) {
     //assert(index < sizeOfDeque);
-    Node *Temp = head;
-    for(int i = 0; i < index; ++i) {
-         Temp = Temp->next;
+    if (index < sizeOfDeque / 2) {
+        Node *Temp = head;
+        for(int i = 0; i < index; ++i) {
+             Temp = Temp->next;
+        }
+        return Temp->value;
     }
-    return Temp->value;
+    else {
+        Node *Temp = tail;
+        for(int i = 0; i < sizeOfDeque-index-1; ++i) {
+             Temp = Temp->prev;
+        }
+        return Temp->value;
+    }
 }
 
 int main()
