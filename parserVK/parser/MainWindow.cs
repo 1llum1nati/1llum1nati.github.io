@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
 using System.IO;
-using System.Text;
+using Newtonsoft.Json;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -16,172 +16,258 @@ public partial class MainWindow : Gtk.Window
         Application.Quit();
         a.RetVal = true;
     }
-    protected void ClearEntrys()
-    {
-        entry1.Text = string.Empty;
-        entry2.Text = string.Empty;
-    }
 
-    protected ChromeOptions InitOptions()
+    private class Chrome : MainWindow
     {
-        ChromeOptions options = new ChromeOptions();
-        options.AddArgument("--incognito");
-        options.AddArgument("--start-maximized");
-        return options;
-    }
-    protected void Login(ChromeDriver driver, string login, string password)
-    {
-        driver.FindElementById("index_email").SendKeys(login);
-        driver.FindElementById("index_pass").SendKeys(password);
-        driver.FindElementById("index_login_button").SendKeys(Keys.Enter);
-        //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
-    }
+        string login, password;
+        static readonly string imagesWrap = "page_post_thumb_wrap", 
+                               videoWrap = "page_post_thumb_video",
+                               audioRow = "audio_row",
+                               GIFWrap = "page_post_thumb_unsized",
+                               writePath = @"/home/r3pl1c4nt/Docs/a.txt";
 
-    protected void FindText(List<IWebElement> Elements, List<string> TextElements, int item)
-    {
-        if (Elements[item].FindElements(By.ClassName("wall_post_text")).Count > 0)
-        {
-            TextElements.Add(Elements[item].FindElements(By.ClassName("wall_post_text"))[0].Text);
-        }
-        else
-        {
-            TextElements.Add("NO TEXT");
-        }
-    }
+        //FileStream aFile = new FileStream(writePath, FileMode.OpenOrCreate);
+        StreamWriter sw = new StreamWriter(writePath, false);
+        static ChromeDriver driver = new ChromeDriver(InitOptions());
+        static IJavaScriptExecutor jsExecutor = driver;
 
-    protected void FindImagesURL(List<IWebElement> Thumbs, List<string> ImagesLinks, string imagesWrap, string videoWrap)
-    {
-        string TempListImages = "";
-        foreach (var images in Thumbs)
+        List<IWebElement> Elements = new List<IWebElement>();
+        List<string> PostID = new List<string>(),
+                     TextElements = new List<string>(),
+                     ImagesLinks = new List<string>(),
+                     VideosLinks = new List<string>(),
+                     AudiosLinks = new List<string>(),
+                     GIFsLinks = new List<string>(),
+                     DocumentsLinks = new List<string>(),
+                     ArticlesLinks = new List<string>(),
+                     PollsLinks = new List<string>();
+
+        protected internal void Init(string log, string pass)
         {
-            foreach (var imageBI in images.FindElements(By.ClassName(imagesWrap)))
+            login = log;
+            password = pass;
+            ClearEntrys();
+            driver.Navigate().GoToUrl("https://vk.com");
+            Login();
+
+            while (true)
             {
-                if (!imageBI.GetAttribute("class").Contains(videoWrap))
+                int oldCount = Elements.Count;
+                jsExecutor.ExecuteScript("window.scrollTo(0, document.body.scrollHeight);");
+                Elements = driver.FindElementsByCssSelector(".wall_post_cont").Distinct().ToList();
+                for (var item = oldCount; item != Elements.Count; ++item)
                 {
-                    TempListImages += imageBI.GetCssValue("background-image").Substring(5, imageBI.GetCssValue("background-image").Length-7) + "\n";
+                    PostID.Add("https://vk.com/wall" + Elements[item].GetAttribute("id").Substring(3, Elements[item].GetAttribute("id").Length - 3));
+                    FindText(item);
+                    FindThumbs(item);
+                }
+
+                for (int i = oldCount; i < Elements.Count; ++i)
+                {
+                    //sw.WriteLine(Elements[i].Text);
+                    sw.WriteLine("-----id-----");
+                    sw.WriteLine(PostID[i]);
+                    sw.WriteLine("-----text-----");
+                    sw.WriteLine(TextElements[i]);
+                    sw.WriteLine("-----images-----");
+                    sw.WriteLine(ImagesLinks[i]);
+                    sw.WriteLine("-----videos-----");
+                    sw.WriteLine(VideosLinks[i]);
+                    sw.WriteLine("-----audios-----");
+                    sw.WriteLine(AudiosLinks[i]);
+                    sw.WriteLine("-----GIFs-----");
+                    sw.WriteLine(GIFsLinks[i]);
+                    sw.WriteLine("-----Documents-----");
+                    sw.WriteLine(DocumentsLinks[i]);
+                    sw.WriteLine("-----Articles-----");
+                    sw.WriteLine(ArticlesLinks[i]);
+                    sw.WriteLine("-----Polls-----");
+                    sw.WriteLine(PollsLinks[i]);
+                    sw.WriteLine("+++++end+++++");
                 }
             }
         }
-        if (TempListImages.Length != 0)
-        {
-            ImagesLinks.Add(TempListImages);
-        }
-        else
-            ImagesLinks.Add("NO IMAGES");
-    }
 
-    protected void FindVideosURL(List<IWebElement> Thumbs, List<string> VideosLinks, string imagesWrap, string videoWrap)
-    {
-        string TempListVideos = "";
-        foreach (var videos in Thumbs)
+        protected void ClearEntrys()
         {
-            if (videos.FindElements(By.ClassName(videoWrap)).Count > 0)
+            entry1.Text = string.Empty;
+            entry2.Text = string.Empty;
+        }
+        protected static ChromeOptions InitOptions()
+        {
+            ChromeOptions options = new ChromeOptions();
+            options.AddArgument("--incognito");
+            options.AddArgument("--start-maximized");
+            return options;
+        }
+        protected void Login()
+        {
+            driver.FindElementById("index_email").SendKeys(login);
+            driver.FindElementById("index_pass").SendKeys(password);
+            driver.FindElementById("index_login_button").SendKeys(Keys.Enter);
+            //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+        }
+
+        protected void FindText(int item)
+        {
+            if (Elements[item].FindElements(By.ClassName("wall_post_text")).Count > 0)
             {
-                foreach (var dataVideo in videos.FindElements(By.ClassName(videoWrap)))
+                string TextElement = "";
+                if (Elements[item].FindElements(By.XPath(".//*[@class='wall_post_text']/span")).Count > 0)
                 {
-                    TempListVideos += "https://vk.com/video" + dataVideo.GetAttribute("data-video") + "\n";
+                    TextElement += Elements[item].FindElement(By.ClassName("wall_post_text")).Text.
+                    Substring(0, Elements[item].FindElement(By.ClassName("wall_post_text")).Text.Length - 19);
+                    jsExecutor.ExecuteScript("arguments[0].style.display = 'block';", Elements[item].FindElement(By.ClassName("wall_post_text")).FindElement(By.TagName("span")));
+                    TextElement += Elements[item].FindElement(By.XPath(".//*[@class='wall_post_text']/span")).Text + "\n";
                 }
+                else
+                {
+                    TextElement += Elements[item].FindElement(By.ClassName("wall_post_text")).Text;
+                }
+                TextElements.Add(TextElement);
+            }
+            else
+            {
+                TextElements.Add("NO TEXT");
             }
         }
-        if (TempListVideos.Length != 0)
-        {
-            VideosLinks.Add(TempListVideos);
-        }
-        else
-            VideosLinks.Add("NO VIDEOS");
-    }
 
-    protected void FindAudiosURL(List<IWebElement> Audios, List<string> AudiosLinks, string audioRow)
-    {
-        string TempListAudios = "";
-        foreach (var dataAudio in Audios[0].FindElements(By.ClassName(audioRow)))
+        protected void SplitThumbsURL(List<IWebElement> Thumbs)
         {
-            TempListAudios += "https://vk.com/audio" + dataAudio.GetAttribute("data-full-id") + "\n";
-        }
-        AudiosLinks.Add(TempListAudios);
-    }
+            string TempListImages = "",
+                   TempListVideos = "",
+                   TempListGIFs = "";
 
-    protected void FindThumbs(List<IWebElement> Elements, List<string> ImagesLinks, List<string> VideosLinks, List<string> AudiosLinks, int item)
-    {
-        string imagesWrap = "page_post_thumb_wrap";
-        string videoWrap = "page_post_thumb_video";
-        string audioRow = "audio_row";
-        List<IWebElement> Thumbs = new List<IWebElement>();
-        List<IWebElement> Audios = new List<IWebElement>();
-        Thumbs = Elements[item].FindElements(By.ClassName("page_post_sized_thumbs")).Distinct().ToList();
-        Audios = Elements[item].FindElements(By.ClassName("wall_audio_rows")).Distinct().ToList();
-        if (Thumbs.Count > 0)
-        {
-            FindImagesURL(Thumbs, ImagesLinks, imagesWrap, videoWrap);
-            FindVideosURL(Thumbs, VideosLinks, imagesWrap, videoWrap);
+            foreach (var target in Thumbs)
+            {
+                foreach (var links in target.FindElements(By.ClassName(imagesWrap)))
+                {
+                    if (!links.GetAttribute("class").Contains(videoWrap))
+                    {
+                        TempListImages += links.GetCssValue("background-image").Substring(5, links.GetCssValue("background-image").Length - 7) + "\n";
+                    }
+                    else
+                    {
+                        TempListVideos += "https://vk.com/video" + links.GetAttribute("data-video") + "\n";
+                    }
+                }
+
+                if (target.FindElements(By.ClassName(GIFWrap)).Count > 0)
+                {
+                    foreach (var dataGIF in target.FindElements(By.ClassName(GIFWrap)))
+                    {
+                        TempListGIFs += dataGIF.GetAttribute("href") + "\n";
+                    }
+                }
+
+                if (TempListGIFs.Length != 0)
+                {
+                    GIFsLinks.Add(TempListGIFs);
+                }
+                else
+                    GIFsLinks.Add("NO GIFS");
+
+                if (TempListImages.Length != 0)
+                {
+                    ImagesLinks.Add(TempListImages);
+                }
+                else
+                    ImagesLinks.Add("NO IMAGES");
+                if (TempListVideos.Length != 0)
+                {
+                    VideosLinks.Add(TempListVideos);
+                }
+                else
+                    VideosLinks.Add("NO VIDEOS");
+            }
         }
-        else
+
+        protected void FindAudiosURL(List<IWebElement> Audios)
         {
-            ImagesLinks.Add("NO IMAGES");
-            VideosLinks.Add("NO VIDEOS");
+            string TempListAudios = "";
+            foreach (var dataAudio in Audios[0].FindElements(By.ClassName(audioRow)))
+            {
+                TempListAudios += "https://vk.com/audio" + dataAudio.GetAttribute("data-full-id") + "\n";
+            }
+            AudiosLinks.Add(TempListAudios);
         }
-        if (Audios.Count > 0)
+
+        protected void FindDocumentsURL(List<IWebElement> Documents)
         {
-            FindAudiosURL(Audios, AudiosLinks, audioRow);
+            string TempListDocuments = "";
+            foreach (var dataDocument in Documents)
+            {
+                TempListDocuments += dataDocument.FindElement(By.ClassName("page_doc_icon")).GetAttribute("href") + "\n";
+            }
+            DocumentsLinks.Add(TempListDocuments);
         }
-        else
+
+        protected void FindThumbs(int item)
         {
-            AudiosLinks.Add("NO AUDIOS");
+            List<IWebElement> Thumbs = new List<IWebElement>(),
+                              Audios = new List<IWebElement>(),
+                              Documents = new List<IWebElement>(),
+                              Articles = new List<IWebElement>(),
+                              Polls = new List<IWebElement>();
+                              
+            Thumbs = Elements[item].FindElements(By.ClassName("page_post_sized_thumbs")).Distinct().ToList();
+            Audios = Elements[item].FindElements(By.ClassName("wall_audio_rows")).Distinct().ToList();
+            Documents = Elements[item].FindElements(By.ClassName("media_desc__doc")).Distinct().ToList();
+            Articles = Elements[item].FindElements(By.ClassName("article_snippet")).Distinct().ToList();
+            Polls = Elements[item].FindElements(By.ClassName("media_voting")).Distinct().ToList();
+
+            if (Thumbs.Count > 0)
+            {
+                SplitThumbsURL(Thumbs);
+            }
+            else
+            {
+                ImagesLinks.Add("NO IMAGES");
+                VideosLinks.Add("NO VIDEOS");
+                GIFsLinks.Add("NO GIFS");
+            }
+
+            if (Audios.Count > 0)
+            {
+                FindAudiosURL(Audios);
+            }
+            else
+            {
+                AudiosLinks.Add("NO AUDIOS");
+            }
+
+            if (Documents.Count > 0)
+            {
+                FindDocumentsURL(Documents);
+            }
+            else
+            {
+                DocumentsLinks.Add("NO DOCUMENTS");
+            }
+
+            if (Articles.Count > 0)
+            {
+                ArticlesLinks.Add(Articles[0].GetAttribute("href") + "\n");
+            }
+            else
+            {
+                ArticlesLinks.Add("NO ARTICLES");
+            }
+
+            if (Polls.Count > 0)
+            {
+                PollsLinks.Add("https://vk.com/poll" + Polls[0].GetAttribute("data-owner-id") + "_" + Polls[0].GetAttribute("data-id") + "\n");
+            }
+            else
+            {
+                PollsLinks.Add("NO POLLS");
+            }
         }
     }
 
     protected void OnButton2Clicked(object sender, EventArgs e)
     {
-        string login = entry1.Text;
-        string password = entry2.Text;
-        string writePath = @"/home/r3pl1c4nt/Docs/a.txt";
-
-        //FileStream aFile = new FileStream(writePath, FileMode.OpenOrCreate);
-        StreamWriter sw = new StreamWriter(writePath, false);
-        List<IWebElement> Elements = new List<IWebElement>();
-        List<string> PostID = new List<string>();
-        List<string> TextElements = new List<string>();
-        List<string> ImagesLinks = new List<string>();
-        List<string> VideosLinks = new List<string>();
-        List<string> AudiosLinks = new List<string>();
-        ChromeDriver driver = new ChromeDriver(InitOptions());
-        IJavaScriptExecutor jsExecutor = driver;
-
-        ClearEntrys();
-        driver.Navigate().GoToUrl("https://vk.com");
-        Login(driver, login, password);
-        //driver.Navigate().GoToUrl("https://vk.com/feed");
-        while(true)
-        {
-            int oldCount = Elements.Count;
-            jsExecutor.ExecuteScript("window.scrollTo(0, document.body.scrollHeight);");
-            Elements = driver.FindElementsByCssSelector(".wall_post_cont").Distinct().ToList();
-            for(var item = oldCount; item != Elements.Count; ++item)
-            {
-                PostID.Add("https://vk.com/wall" + Elements[item].GetAttribute("id").Substring(3, Elements[item].GetAttribute("id").Length - 3));
-                FindText(Elements, TextElements, item);
-                FindThumbs(Elements, ImagesLinks, VideosLinks, AudiosLinks, item);
-            }
-
-            for (int i = oldCount; i < Elements.Count; ++i)
-            {
-                //sw.WriteLine(Elements[i].Text);
-                sw.WriteLine("-----id-----");
-                sw.WriteLine(PostID[i]);
-                sw.WriteLine("-----text-----");
-                sw.WriteLine(TextElements[i]);
-                sw.WriteLine("-----images-----");
-                sw.WriteLine(ImagesLinks[i]);
-                sw.WriteLine("-----videos-----");
-                sw.WriteLine(VideosLinks[i]);
-                sw.WriteLine("-----audios-----");
-                sw.WriteLine(AudiosLinks[i]);
-                sw.WriteLine("+++++end+++++");
-            }
-        }
-
-        
-        //
-
+        Chrome Main = new Chrome();
+        Main.Init(entry1.Text, entry2.Text);
     }
 }
