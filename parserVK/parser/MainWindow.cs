@@ -7,6 +7,7 @@ using OpenQA.Selenium;
 using System.IO;
 using Newtonsoft.Json;
 
+
 public partial class MainWindow : Gtk.Window
 {
     public MainWindow() : base(Gtk.WindowType.Toplevel) => Build();
@@ -17,17 +18,24 @@ public partial class MainWindow : Gtk.Window
         a.RetVal = true;
     }
 
+    public class Text
+    {
+        public string id { get; set; } 
+        public string text { get; set; }
+    }
+
     private class Chrome : MainWindow
     {
         string login, password;
-        static readonly string imagesWrap = "page_post_thumb_wrap", 
+        static readonly string imagesWrap = "page_post_thumb_wrap",
                                videoWrap = "page_post_thumb_video",
                                audioRow = "audio_row",
                                GIFWrap = "page_post_thumb_unsized",
-                               writePath = @"/home/r3pl1c4nt/Docs/a.txt";
+                               writePath = @"/home/r3pl1c4nt/Docs/a.txt",
+                               testPath = @"/home/r3pl1c4nt/Docs/h.json";
 
-        //FileStream aFile = new FileStream(writePath, FileMode.OpenOrCreate);
-        StreamWriter sw = new StreamWriter(writePath, false);
+        FileStream aFile = new FileStream(writePath, FileMode.Create, FileAccess.ReadWrite);
+        FileStream hFile = new FileStream(testPath, FileMode.Create, FileAccess.ReadWrite);
         static ChromeDriver driver = new ChromeDriver(InitOptions());
         static IJavaScriptExecutor jsExecutor = driver;
 
@@ -40,7 +48,11 @@ public partial class MainWindow : Gtk.Window
                      GIFsLinks = new List<string>(),
                      DocumentsLinks = new List<string>(),
                      ArticlesLinks = new List<string>(),
-                     PollsLinks = new List<string>();
+                     ThumbedLinks = new List<string>(),
+                     PollsLinks = new List<string>(),
+                     Geotags = new List<string>(),
+                     PostersLinks = new List<string>(),
+                     MediaThumbedLinks = new List<string>();
 
         protected internal void Init(string log, string pass)
         {
@@ -49,7 +61,8 @@ public partial class MainWindow : Gtk.Window
             ClearEntrys();
             driver.Navigate().GoToUrl("https://vk.com");
             Login();
-
+            aFile.Close();
+            hFile.Close();
             while (true)
             {
                 int oldCount = Elements.Count;
@@ -62,31 +75,57 @@ public partial class MainWindow : Gtk.Window
                     FindThumbs(item);
                 }
 
-                for (int i = oldCount; i < Elements.Count; ++i)
+
+                //sw.WriteLine(Elements[i].Text);
+                using (StreamWriter sw = new StreamWriter(writePath, true))
                 {
-                    //sw.WriteLine(Elements[i].Text);
-                    sw.WriteLine("-----id-----");
-                    sw.WriteLine(PostID[i]);
-                    sw.WriteLine("-----text-----");
-                    sw.WriteLine(TextElements[i]);
-                    sw.WriteLine("-----images-----");
-                    sw.WriteLine(ImagesLinks[i]);
-                    sw.WriteLine("-----videos-----");
-                    sw.WriteLine(VideosLinks[i]);
-                    sw.WriteLine("-----audios-----");
-                    sw.WriteLine(AudiosLinks[i]);
-                    sw.WriteLine("-----GIFs-----");
-                    sw.WriteLine(GIFsLinks[i]);
-                    sw.WriteLine("-----Documents-----");
-                    sw.WriteLine(DocumentsLinks[i]);
-                    sw.WriteLine("-----Articles-----");
-                    sw.WriteLine(ArticlesLinks[i]);
-                    sw.WriteLine("-----Polls-----");
-                    sw.WriteLine(PollsLinks[i]);
-                    sw.WriteLine("+++++end+++++");
+                    for (int i = oldCount; i < Elements.Count; ++i)
+                    {
+                        sw.WriteLine("-----id-----");
+                        sw.WriteLine(PostID[i]);
+                        sw.WriteLine("-----text-----");
+                        sw.WriteLine(TextElements[i]);
+                        sw.WriteLine("-----images-----");
+                        sw.WriteLine(ImagesLinks[i]);
+                        sw.WriteLine("-----videos-----");
+                        sw.WriteLine(VideosLinks[i]);
+                        sw.WriteLine("-----audios-----");
+                        sw.WriteLine(AudiosLinks[i]);
+                        sw.WriteLine("-----GIFs-----");
+                        sw.WriteLine(GIFsLinks[i]);
+                        sw.WriteLine("-----Documents-----");
+                        sw.WriteLine(DocumentsLinks[i]);
+                        sw.WriteLine("-----Articles-----");
+                        sw.WriteLine(ArticlesLinks[i]);
+                        sw.WriteLine("-----Polls-----");
+                        sw.WriteLine(PollsLinks[i]);
+                        sw.WriteLine("-----Thumbed links-----");
+                        sw.WriteLine(ThumbedLinks[i]);
+                        sw.WriteLine("-----Geotags-----");
+                        sw.WriteLine(Geotags[i]);
+                        sw.WriteLine("-----Posters-----");
+                        sw.WriteLine(PostersLinks[i]);
+                        sw.WriteLine("-----Media_link__media-----");
+                        sw.WriteLine(MediaThumbedLinks[i]);
+                        sw.WriteLine("+++++end+++++");
+                    }
+                }
+
+                using (StreamWriter swTest = new StreamWriter(testPath, true))
+                {
+                    for (int i = oldCount; i < Elements.Count; ++i)
+                    {
+                        Text temp = new Text
+                        {
+                            id = PostID[i].Replace("\n", " "),
+                            text = TextElements[i].Replace("\n", " ")
+                        };
+                        swTest.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented));
+                    }
                 }
             }
         }
+
 
         protected void ClearEntrys()
         {
@@ -125,10 +164,21 @@ public partial class MainWindow : Gtk.Window
                     TextElement += Elements[item].FindElement(By.ClassName("wall_post_text")).Text;
                 }
                 TextElements.Add(TextElement);
+                PostersLinks.Add("false");
             }
             else
-            {
-                TextElements.Add("NO TEXT");
+            {   
+                if (Elements[item].FindElements(By.ClassName("poster__wrap")).Count > 0)
+                {
+                    PostersLinks.Add(Elements[item].FindElement(By.XPath(".//*[@class='poster__wrap']/*[@class='poster__image']")).GetCssValue("background-image").
+                    Substring(5, Elements[item].FindElement(By.XPath(".//*[@class='poster__wrap']/*[@class='poster__image']")).GetCssValue("background-image").Length - 7));
+                    TextElements.Add(Elements[item].FindElement(By.XPath(".//*[@class='poster__wrap']/*[@class='poster__text']")).Text);
+                }
+                else
+                {
+                    PostersLinks.Add("false");
+                    TextElements.Add("false");
+                }
             }
         }
 
@@ -165,20 +215,20 @@ public partial class MainWindow : Gtk.Window
                     GIFsLinks.Add(TempListGIFs);
                 }
                 else
-                    GIFsLinks.Add("NO GIFS");
+                    GIFsLinks.Add("false");
 
                 if (TempListImages.Length != 0)
                 {
                     ImagesLinks.Add(TempListImages);
                 }
                 else
-                    ImagesLinks.Add("NO IMAGES");
+                    ImagesLinks.Add("false");
                 if (TempListVideos.Length != 0)
                 {
                     VideosLinks.Add(TempListVideos);
                 }
                 else
-                    VideosLinks.Add("NO VIDEOS");
+                    VideosLinks.Add("false");
             }
         }
 
@@ -208,13 +258,19 @@ public partial class MainWindow : Gtk.Window
                               Audios = new List<IWebElement>(),
                               Documents = new List<IWebElement>(),
                               Articles = new List<IWebElement>(),
-                              Polls = new List<IWebElement>();
+                              Polls = new List<IWebElement>(),
+                              TLinks = new List<IWebElement>(),
+                              GTags = new List<IWebElement>(),
+                              MLinks = new List<IWebElement>();
                               
             Thumbs = Elements[item].FindElements(By.ClassName("page_post_sized_thumbs")).Distinct().ToList();
             Audios = Elements[item].FindElements(By.ClassName("wall_audio_rows")).Distinct().ToList();
             Documents = Elements[item].FindElements(By.ClassName("media_desc__doc")).Distinct().ToList();
             Articles = Elements[item].FindElements(By.ClassName("article_snippet")).Distinct().ToList();
             Polls = Elements[item].FindElements(By.ClassName("media_voting")).Distinct().ToList();
+            TLinks = Elements[item].FindElements(By.ClassName("thumbed_link")).Distinct().ToList();
+            GTags = Elements[item].FindElements(By.ClassName("page_media_place_label_inline")).Distinct().ToList();
+            MLinks = Elements[item].FindElements(By.ClassName("media_link")).Distinct().ToList();
 
             if (Thumbs.Count > 0)
             {
@@ -222,9 +278,9 @@ public partial class MainWindow : Gtk.Window
             }
             else
             {
-                ImagesLinks.Add("NO IMAGES");
-                VideosLinks.Add("NO VIDEOS");
-                GIFsLinks.Add("NO GIFS");
+                ImagesLinks.Add("false");
+                VideosLinks.Add("false");
+                GIFsLinks.Add("false");
             }
 
             if (Audios.Count > 0)
@@ -233,7 +289,7 @@ public partial class MainWindow : Gtk.Window
             }
             else
             {
-                AudiosLinks.Add("NO AUDIOS");
+                AudiosLinks.Add("false");
             }
 
             if (Documents.Count > 0)
@@ -242,7 +298,7 @@ public partial class MainWindow : Gtk.Window
             }
             else
             {
-                DocumentsLinks.Add("NO DOCUMENTS");
+                DocumentsLinks.Add("false");
             }
 
             if (Articles.Count > 0)
@@ -251,7 +307,7 @@ public partial class MainWindow : Gtk.Window
             }
             else
             {
-                ArticlesLinks.Add("NO ARTICLES");
+                ArticlesLinks.Add("false");
             }
 
             if (Polls.Count > 0)
@@ -260,8 +316,33 @@ public partial class MainWindow : Gtk.Window
             }
             else
             {
-                PollsLinks.Add("NO POLLS");
+                PollsLinks.Add("false");
             }
+            if (TLinks.Count > 0)
+            {
+                ThumbedLinks.Add(TLinks[0].FindElement(By.ClassName("thumbed_link__thumb")).GetAttribute("href") + "\n");
+            }
+            else
+            {
+                ThumbedLinks.Add("false");
+            }
+            if (MLinks.Count > 0)
+            {
+                MediaThumbedLinks.Add(MLinks[0].FindElement(By.ClassName("media_link__title")).GetAttribute("href") + "\n");
+            }
+            else
+            {
+                MediaThumbedLinks.Add("false");
+            }
+            if (GTags.Count > 0)
+            {
+                Geotags.Add(GTags[0].Text + "\n");
+            }
+            else
+            {
+                Geotags.Add("false");
+            }
+
         }
     }
 
