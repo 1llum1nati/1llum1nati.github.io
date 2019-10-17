@@ -2,14 +2,13 @@
   <MonoDevelop.Ide.ItemProperties.parser PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="parser/MainWindow.cs">
     <Files>
-      <File FileName="parser/MainWindow.cs" Line="168" Column="14" />
+      <File FileName="parser/MainWindow.cs" Line="355" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="parser" expanded="True">
             <Node name="parser" expanded="True">
-              <Node name="References" expanded="True" />
               <Node name="MainWindow.cs" selected="True" />
             </Node>
           </Node>

@@ -20,8 +20,29 @@ public partial class MainWindow : Gtk.Window
 
     public class Text
     {
-        public string id { get; set; } 
-        public string text { get; set; }
+        public string ID { get; set; } 
+        public string PostText { get; set; }
+    }
+
+    public class Image
+    {
+        public string ID { get; set; }
+        public string Img { get; set; }
+    }
+
+    public class All
+    {
+        public string ID { get; set; }
+        public string Video { get; set; }
+        public string Audio { get; set; }
+        public string GIF { get; set; }
+        public string Doc { get; set; }
+        public string Article { get; set; }
+        public string Poll { get; set; }
+        public string ThumbedLink { get; set; }
+        public string Geotag { get; set; }
+        public string Poster { get; set; }
+        public string MediaThumbedLink { get; set; }
     }
 
     private class Chrome : MainWindow
@@ -32,10 +53,14 @@ public partial class MainWindow : Gtk.Window
                                audioRow = "audio_row",
                                GIFWrap = "page_post_thumb_unsized",
                                writePath = @"/home/r3pl1c4nt/Docs/a.txt",
-                               testPath = @"/home/r3pl1c4nt/Docs/h.json";
+                               textPath = @"/home/r3pl1c4nt/Docs/idText.json",
+                               imgPath = @"/home/r3pl1c4nt/Docs/idImg.json",
+                               allPath = @"/home/r3pl1c4nt/Docs/all.json";
 
-        FileStream aFile = new FileStream(writePath, FileMode.Create, FileAccess.ReadWrite);
-        FileStream hFile = new FileStream(testPath, FileMode.Create, FileAccess.ReadWrite);
+        //FileStream aFile = new FileStream(writePath, FileMode.Create, FileAccess.ReadWrite);
+        FileStream idTextFile = new FileStream(textPath, FileMode.Create, FileAccess.ReadWrite);
+        FileStream idImgFile = new FileStream(imgPath, FileMode.Create, FileAccess.ReadWrite);
+        FileStream allFile = new FileStream(allPath, FileMode.Create, FileAccess.ReadWrite);
         static ChromeDriver driver = new ChromeDriver(InitOptions());
         static IJavaScriptExecutor jsExecutor = driver;
 
@@ -61,8 +86,8 @@ public partial class MainWindow : Gtk.Window
             ClearEntrys();
             driver.Navigate().GoToUrl("https://vk.com");
             Login();
-            aFile.Close();
-            hFile.Close();
+            //aFile.Close();
+            CloseStreams();
             while (true)
             {
                 int oldCount = Elements.Count;
@@ -77,7 +102,7 @@ public partial class MainWindow : Gtk.Window
 
 
                 //sw.WriteLine(Elements[i].Text);
-                using (StreamWriter sw = new StreamWriter(writePath, true))
+                /*using (StreamWriter sw = new StreamWriter(writePath, true))
                 {
                     for (int i = oldCount; i < Elements.Count; ++i)
                     {
@@ -109,18 +134,52 @@ public partial class MainWindow : Gtk.Window
                         sw.WriteLine(MediaThumbedLinks[i]);
                         sw.WriteLine("+++++end+++++");
                     }
-                }
+                }*/
 
-                using (StreamWriter swTest = new StreamWriter(testPath, true))
+                using (StreamWriter swText = new StreamWriter(textPath, true))
                 {
                     for (int i = oldCount; i < Elements.Count; ++i)
                     {
                         Text temp = new Text
                         {
-                            id = PostID[i].Replace("\n", " "),
-                            text = TextElements[i].Replace("\n", " ")
+                            ID = PostID[i].Replace("\n", " "),
+                            PostText = TextElements[i].Replace("\n", " ")
                         };
-                        swTest.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented));
+                        swText.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented));
+                    }
+                }
+
+                using (StreamWriter swImg = new StreamWriter(imgPath, true))
+                {
+                    for (int i = oldCount; i < Elements.Count; ++i)
+                    {
+                        Image temp = new Image
+                        {
+                            ID = PostID[i].Replace("\n", " "),
+                            Img = ImagesLinks[i].Replace("\n", " ")
+                        };
+                        swImg.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented));
+                    }
+                }
+                using (StreamWriter swAll = new StreamWriter(allPath, true))
+                {
+                    for (int i = oldCount; i < Elements.Count; ++i)
+                    {
+                        All temp = new All
+                        {
+                            ID = PostID[i].Replace("\n", " "),
+                            Video = VideosLinks[i].Replace("\n", " "),
+                            Audio = AudiosLinks[i].Replace("\n", " "),
+                            GIF = GIFsLinks[i].Replace("\n", " "),
+                            Doc = DocumentsLinks[i].Replace("\n", " "),
+                            Article = ArticlesLinks[i].Replace("\n", " "),
+                            Poll = PollsLinks[i].Replace("\n", " "),
+                            ThumbedLink = ThumbedLinks[i].Replace("\n", " "),
+                            Geotag = Geotags[i].Replace("\n", " "),
+                            Poster = PostersLinks[i].Replace("\n", " "),
+                            MediaThumbedLink = MediaThumbedLinks[i].Replace("\n", " ")
+                        };
+                        swAll.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented));
                     }
                 }
             }
@@ -131,6 +190,12 @@ public partial class MainWindow : Gtk.Window
         {
             entry1.Text = string.Empty;
             entry2.Text = string.Empty;
+        }
+        protected void CloseStreams()
+        {
+            idTextFile.Close();
+            idImgFile.Close();
+            allFile.Close();
         }
         protected static ChromeOptions InitOptions()
         {
@@ -164,7 +229,7 @@ public partial class MainWindow : Gtk.Window
                     TextElement += Elements[item].FindElement(By.ClassName("wall_post_text")).Text;
                 }
                 TextElements.Add(TextElement);
-                PostersLinks.Add("false");
+                PostersLinks.Add("");
             }
             else
             {   
@@ -176,8 +241,8 @@ public partial class MainWindow : Gtk.Window
                 }
                 else
                 {
-                    PostersLinks.Add("false");
-                    TextElements.Add("false");
+                    PostersLinks.Add("");
+                    TextElements.Add("");
                 }
             }
         }
@@ -210,25 +275,9 @@ public partial class MainWindow : Gtk.Window
                     }
                 }
 
-                if (TempListGIFs.Length != 0)
-                {
-                    GIFsLinks.Add(TempListGIFs);
-                }
-                else
-                    GIFsLinks.Add("false");
-
-                if (TempListImages.Length != 0)
-                {
-                    ImagesLinks.Add(TempListImages);
-                }
-                else
-                    ImagesLinks.Add("false");
-                if (TempListVideos.Length != 0)
-                {
-                    VideosLinks.Add(TempListVideos);
-                }
-                else
-                    VideosLinks.Add("false");
+                ImagesLinks.Add(TempListImages);
+                GIFsLinks.Add(TempListGIFs);
+                VideosLinks.Add(TempListVideos);
             }
         }
 
@@ -278,9 +327,9 @@ public partial class MainWindow : Gtk.Window
             }
             else
             {
-                ImagesLinks.Add("false");
-                VideosLinks.Add("false");
-                GIFsLinks.Add("false");
+                ImagesLinks.Add("");
+                VideosLinks.Add("");
+                GIFsLinks.Add("");
             }
 
             if (Audios.Count > 0)
@@ -289,7 +338,7 @@ public partial class MainWindow : Gtk.Window
             }
             else
             {
-                AudiosLinks.Add("false");
+                AudiosLinks.Add("");
             }
 
             if (Documents.Count > 0)
@@ -298,7 +347,7 @@ public partial class MainWindow : Gtk.Window
             }
             else
             {
-                DocumentsLinks.Add("false");
+                DocumentsLinks.Add("");
             }
 
             if (Articles.Count > 0)
@@ -307,7 +356,7 @@ public partial class MainWindow : Gtk.Window
             }
             else
             {
-                ArticlesLinks.Add("false");
+                ArticlesLinks.Add("");
             }
 
             if (Polls.Count > 0)
@@ -316,7 +365,7 @@ public partial class MainWindow : Gtk.Window
             }
             else
             {
-                PollsLinks.Add("false");
+                PollsLinks.Add("");
             }
             if (TLinks.Count > 0)
             {
@@ -324,7 +373,7 @@ public partial class MainWindow : Gtk.Window
             }
             else
             {
-                ThumbedLinks.Add("false");
+                ThumbedLinks.Add("");
             }
             if (MLinks.Count > 0)
             {
@@ -332,7 +381,7 @@ public partial class MainWindow : Gtk.Window
             }
             else
             {
-                MediaThumbedLinks.Add("false");
+                MediaThumbedLinks.Add("");
             }
             if (GTags.Count > 0)
             {
@@ -340,7 +389,7 @@ public partial class MainWindow : Gtk.Window
             }
             else
             {
-                Geotags.Add("false");
+                Geotags.Add("");
             }
 
         }
