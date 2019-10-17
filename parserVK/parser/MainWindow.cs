@@ -6,7 +6,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
 using System.IO;
 using Newtonsoft.Json;
-
+using System.Threading;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -52,17 +52,16 @@ public partial class MainWindow : Gtk.Window
                                videoWrap = "page_post_thumb_video",
                                audioRow = "audio_row",
                                GIFWrap = "page_post_thumb_unsized",
-                               writePath = @"/home/r3pl1c4nt/Docs/a.txt",
                                textPath = @"/home/r3pl1c4nt/Docs/idText.json",
                                imgPath = @"/home/r3pl1c4nt/Docs/idImg.json",
                                allPath = @"/home/r3pl1c4nt/Docs/all.json";
 
-        //FileStream aFile = new FileStream(writePath, FileMode.Create, FileAccess.ReadWrite);
         FileStream idTextFile = new FileStream(textPath, FileMode.Create, FileAccess.ReadWrite);
         FileStream idImgFile = new FileStream(imgPath, FileMode.Create, FileAccess.ReadWrite);
         FileStream allFile = new FileStream(allPath, FileMode.Create, FileAccess.ReadWrite);
         static ChromeDriver driver = new ChromeDriver(InitOptions());
         static IJavaScriptExecutor jsExecutor = driver;
+        int oldCount;
 
         List<IWebElement> Elements = new List<IWebElement>();
         List<string> PostID = new List<string>(),
@@ -86,11 +85,10 @@ public partial class MainWindow : Gtk.Window
             ClearEntrys();
             driver.Navigate().GoToUrl("https://vk.com");
             Login();
-            //aFile.Close();
             CloseStreams();
             while (true)
             {
-                int oldCount = Elements.Count;
+                oldCount = Elements.Count;
                 jsExecutor.ExecuteScript("window.scrollTo(0, document.body.scrollHeight);");
                 Elements = driver.FindElementsByCssSelector(".wall_post_cont").Distinct().ToList();
                 for (var item = oldCount; item != Elements.Count; ++item)
@@ -100,41 +98,7 @@ public partial class MainWindow : Gtk.Window
                     FindThumbs(item);
                 }
 
-
-                //sw.WriteLine(Elements[i].Text);
-                /*using (StreamWriter sw = new StreamWriter(writePath, true))
-                {
-                    for (int i = oldCount; i < Elements.Count; ++i)
-                    {
-                        sw.WriteLine("-----id-----");
-                        sw.WriteLine(PostID[i]);
-                        sw.WriteLine("-----text-----");
-                        sw.WriteLine(TextElements[i]);
-                        sw.WriteLine("-----images-----");
-                        sw.WriteLine(ImagesLinks[i]);
-                        sw.WriteLine("-----videos-----");
-                        sw.WriteLine(VideosLinks[i]);
-                        sw.WriteLine("-----audios-----");
-                        sw.WriteLine(AudiosLinks[i]);
-                        sw.WriteLine("-----GIFs-----");
-                        sw.WriteLine(GIFsLinks[i]);
-                        sw.WriteLine("-----Documents-----");
-                        sw.WriteLine(DocumentsLinks[i]);
-                        sw.WriteLine("-----Articles-----");
-                        sw.WriteLine(ArticlesLinks[i]);
-                        sw.WriteLine("-----Polls-----");
-                        sw.WriteLine(PollsLinks[i]);
-                        sw.WriteLine("-----Thumbed links-----");
-                        sw.WriteLine(ThumbedLinks[i]);
-                        sw.WriteLine("-----Geotags-----");
-                        sw.WriteLine(Geotags[i]);
-                        sw.WriteLine("-----Posters-----");
-                        sw.WriteLine(PostersLinks[i]);
-                        sw.WriteLine("-----Media_link__media-----");
-                        sw.WriteLine(MediaThumbedLinks[i]);
-                        sw.WriteLine("+++++end+++++");
-                    }
-                }*/
+                //Thread textThread = new Thread(() => JsonTextWrite(oldCount));
 
                 using (StreamWriter swText = new StreamWriter(textPath, true))
                 {
@@ -148,7 +112,6 @@ public partial class MainWindow : Gtk.Window
                         swText.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented));
                     }
                 }
-
                 using (StreamWriter swImg = new StreamWriter(imgPath, true))
                 {
                     for (int i = oldCount; i < Elements.Count; ++i)
@@ -185,7 +148,6 @@ public partial class MainWindow : Gtk.Window
             }
         }
 
-
         protected void ClearEntrys()
         {
             entry1.Text = string.Empty;
@@ -209,7 +171,6 @@ public partial class MainWindow : Gtk.Window
             driver.FindElementById("index_email").SendKeys(login);
             driver.FindElementById("index_pass").SendKeys(password);
             driver.FindElementById("index_login_button").SendKeys(Keys.Enter);
-            //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
         }
 
         protected void FindText(int item)
