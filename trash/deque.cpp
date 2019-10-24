@@ -191,11 +191,13 @@ int main()
             Example.push_backD(number);
         }
         if (choice == 3) {
-            std::cout << "Last front value was: ";
+            std::cout << "Last front value was: "; 
+            Example.frontD();
             Example.pop_frontD();
         }
         if (choice == 4) {
             std::cout << "Last back value was: ";
+            Example.backD();
             Example.pop_backD();
         }
         if (choice == 5) {
