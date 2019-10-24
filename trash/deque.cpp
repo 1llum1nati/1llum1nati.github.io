@@ -97,13 +97,12 @@ protected:
         if (!sizeOfDeque)
             std::cout << "Deque is empty!" << std::endl;
         else {
-            for (int i = 0; i < sizeOfDeque; ++i)
-            {
-	            int temp = head->value;
-	            std::cout << temp << std::endl;
-	            pop_front();
-	            push_back(temp);
-	    	}
+            for (int i = 0; i < sizeOfDeque; ++i) {
+	        int temp = head->value;
+	        std::cout << temp << std::endl;
+	        pop_front();
+	        push_back(temp);
+	    }
         }
     }
 
@@ -135,19 +134,17 @@ public:
 int &DequeD::operator[] (int index) {
     int temp2;
     Node *Temp = head;
-    for (int i = 0; i < index; ++i)
-    {
+    for (int i = 0; i < index; ++i) {
         Temp = head->next;
         pop_front();
         push_back(Temp->value);
-	}
-	for (int i = 0; i < index; ++i)
-    {
+    }
+    for (int i = 0; i < index; ++i) {
         temp2 = tail->value;
         pop_back();
         push_front(temp2);
-	}
-	return Temp->value;
+    }
+    return Temp->value;
 }
 
 int main()
