@@ -97,13 +97,13 @@ protected:
         if (!sizeOfDeque)
             std::cout << "Deque is empty!" << std::endl;
         else {
-            Node *Temp = head;
-            for(int i = 0; i != sizeOfDeque; ++i) {
-                int tempInt = Temp->value;
-                Temp = Temp->next;
-                std::cout << tempInt << std::endl;
-            }
-            delete Temp;
+            for (int i = 0; i < sizeOfDeque; ++i)
+            {
+	            int temp = head->value;
+	            std::cout << temp << std::endl;
+	            pop_front();
+	            push_back(temp);
+	    	}
         }
     }
 
@@ -131,22 +131,23 @@ public:
     int &operator[] (int index);
     int tempInt = -1;
 };
+
 int &DequeD::operator[] (int index) {
-    //assert(index < sizeOfDeque);
-    if (index < sizeOfDeque / 2) {
-        Node *Temp = head;
-        for(int i = 0; i < index; ++i) {
-             Temp = Temp->next;
-        }
-        return Temp->value;
-    }
-    else {
-        Node *Temp = tail;
-        for(int i = 0; i < sizeOfDeque-index-1; ++i) {
-             Temp = Temp->prev;
-        }
-        return Temp->value;
-    }
+    int temp2;
+    Node *Temp = head;
+    for (int i = 0; i < index; ++i)
+    {
+        Temp = head->next;
+        pop_front();
+        push_back(Temp->value);
+	}
+	for (int i = 0; i < index; ++i)
+    {
+        temp2 = tail->value;
+        pop_back();
+        push_front(temp2);
+	}
+	return Temp->value;
 }
 
 int main()
@@ -191,13 +192,11 @@ int main()
             Example.push_backD(number);
         }
         if (choice == 3) {
-            std::cout << "Last front value was: "; 
-            Example.frontD();
+            std::cout << "Done!\n"; 
             Example.pop_frontD();
         }
         if (choice == 4) {
-            std::cout << "Last back value was: ";
-            Example.backD();
+            std::cout << "Done!\n";
             Example.pop_backD();
         }
         if (choice == 5) {
@@ -213,7 +212,7 @@ int main()
             int tempIndex;
             std::cout << "Type index" << std::endl;
             std::cin >> tempIndex;
-            if (tempIndex > 0 && tempIndex < Example.size()) {
+            if (tempIndex >= 0 && tempIndex < Example.size()) {
                 std::cout << Example[tempIndex] << std::endl;
             }
             else
@@ -223,7 +222,7 @@ int main()
             int tempIndex, tempValue;
             std::cout << "Type index" << std::endl;
             std::cin >> tempIndex;
-            if (tempIndex > 0 && tempIndex < Example.size()) {
+            if (tempIndex >= 0 && tempIndex < Example.size()) {
                 std::cout << "Type value" << std::endl;
                 std::cin >> tempValue;
                 Example[tempIndex] = tempValue;
