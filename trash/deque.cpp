@@ -57,8 +57,7 @@ protected:
 
     void pop_front() {
         if (sizeOfDeque > 0) {
-            Node *Temp = new Node;
-            Temp = head;
+            Node *Temp = head;
             head = head->next;
             delete Temp;
             --sizeOfDeque;
@@ -68,8 +67,7 @@ protected:
     }
     void pop_back() {
         if (sizeOfDeque > 0) {
-            Node *Temp = new Node;
-            Temp = tail;
+            Node *Temp = tail;
             tail = tail->prev;
             delete Temp;
             --sizeOfDeque;
@@ -79,7 +77,7 @@ protected:
     }
 
     void init(int initSize) {
-        int temp = 0;
+        int temp;
         for (int i = 0; i != initSize; ++i) {
              temp = rand() % 100;
              push_back(temp);
@@ -216,13 +214,12 @@ int main()
                 std::cout << "error" << std::endl;
         }
         if (choice == 9) {
-            int tempIndex, tempValue;
+            int tempIndex;
             std::cout << "Type index" << std::endl;
             std::cin >> tempIndex;
             if (tempIndex >= 0 && tempIndex < Example.size()) {
                 std::cout << "Type value" << std::endl;
-                std::cin >> tempValue;
-                Example[tempIndex] = tempValue;
+                std::cin >> Example[tempIndex];
             }
             else
                 std::cout << "error" << std::endl;
