@@ -32,10 +32,8 @@ protected:
     }
 
     void init(int initSize) {
-        int temp = 0;
         for (int i = 0; i != initSize; ++i) {
-             temp = rand() % 100;
-             push(temp);
+             push(rand() % 100);
         }
     }
 
@@ -143,13 +141,12 @@ int main()
                 std::cout << "error" << std::endl;
         }
         if (choice == 7) {
-            int tempIndex, tempValue;
+            int tempIndex;
             std::cout << "Type index" << std::endl;
             std::cin >> tempIndex;
             if (tempIndex > 0 && tempIndex < Example.size()) {
                 std::cout << "Type value" << std::endl;
-                std::cin >> tempValue;
-                Example[tempIndex] = tempValue;
+                std::cin >> Example[tempIndex];
             }
             else
                 std::cout << "error" << std::endl;
