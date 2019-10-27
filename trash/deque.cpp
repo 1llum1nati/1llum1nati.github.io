@@ -77,10 +77,8 @@ protected:
     }
 
     void init(int initSize) {
-        int temp;
         for (int i = 0; i != initSize; ++i) {
-             temp = rand() % 100;
-             push_back(temp);
+             push_back(rand() % 100);
         }
     }
 
@@ -130,7 +128,6 @@ public:
 };
 
 int &DequeD::operator[] (int index) {
-    int temp2;
     Node *Temp = head;
     for (int i = 0; i < index; ++i) {
         Temp = head->next;
@@ -138,9 +135,8 @@ int &DequeD::operator[] (int index) {
         push_back(Temp->value);
     }
     for (int i = 0; i < index; ++i) {
-        temp2 = tail->value;
         pop_back();
-        push_front(temp2);
+        push_front(tail->value);
     }
     return Temp->value;
 }
