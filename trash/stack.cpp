@@ -48,25 +48,18 @@ protected:
         if (!sizeOfStack)
             std::cout << "Stack is empty!" << std::endl;
         else {
-            Node *Temp = head;
-            for(int i = 0; i != sizeOfStack; ++i) {
-                int tempInt = Temp->value;
-                Temp = Temp->next;
-                std::cout << tempInt << std::endl;
-            }
-            delete Temp;
-            /*
-            int *tempArr = new int[sizeOfStack];
+        	Stack *TempStack = new Stack;
             int TempSize = sizeOfStack;
-            for(int i = TempSize; i != 0; --i) {
-            	tempArr[i] = head->value;
+            for(int i = 0; i != TempSize; ++i) {
+            	TempStack->push(head->value);
+            	std::cout << head->value << std::endl;
             	pop();
             }
             for(int i = 0; i != TempSize; ++i) {
-            	std::cout << tempArr[i] << std::endl;
-            	push(tempArr[i]);
+            	push(TempStack->head->value);
+            	TempStack->pop();
             }
-            delete tempArr;*/
+            delete TempStack;
         }
     }
     void front() {
@@ -93,10 +86,23 @@ public:
 };
 
 int &StackD::operator[] (int index) {
-    Node *Temp = head;
-    for(int i = 0; i < index; ++i) {
+    /*for(int i = 0; i < index; ++i) {
          Temp = Temp->next;
     }
+    return Temp->value;*/
+    
+    StackD *TempStack = new StackD;
+    int TempSize = sizeOfStack;
+    for(int i = 0; i != index; ++i) {
+        TempStack->pushD(head->value);
+        popD();
+    }
+    Node *Temp = head;
+    for(int i = 0; i != index; ++i) {
+    	pushD(TempStack->head->value);
+        TempStack->popD();
+    }
+    delete TempStack;
     return Temp->value;
 }
 
@@ -150,7 +156,7 @@ int main()
             int tempIndex;
             std::cout << "Type index" << std::endl;
             std::cin >> tempIndex;
-            if (tempIndex > 0 && tempIndex < Example.size())
+            if (tempIndex >= 0 && tempIndex < Example.size())
                 std::cout << Example[tempIndex] << std::endl;
             else
                 std::cout << "error" << std::endl;
