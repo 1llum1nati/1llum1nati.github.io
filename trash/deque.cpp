@@ -103,10 +103,16 @@ protected:
     }
 
     void front() {
-        std::cout << head->value << std::endl;
+    	if (!sizeOfDeque)
+    	    std::cout << "Deque is empty!" << std::endl;
+    	else
+            std::cout << head->value << std::endl;
     }
     void back() {
-        std::cout << tail->value << std::endl;
+    	if (!sizeOfDeque)
+    	    std::cout << "Deque is empty!" << std::endl;
+    	else
+            std::cout << tail->value << std::endl;
     }
 
 };
