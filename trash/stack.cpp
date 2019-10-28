@@ -48,7 +48,6 @@ protected:
         if (!sizeOfStack)
             std::cout << "Stack is empty!" << std::endl;
         else {
-        	
             Node *Temp = head;
             for(int i = 0; i != sizeOfStack; ++i) {
                 int tempInt = Temp->value;
@@ -71,7 +70,10 @@ protected:
         }
     }
     void front() {
-        std::cout << head->value << std::endl;
+    	if(!sizeOfStack)
+    	    std::cout << "Stack is empty!" << std::endl;
+    	else
+            std::cout << head->value << std::endl;
     }
 };
 
@@ -121,7 +123,8 @@ int main()
             "5 - check front\n" <<
             "6 - get value\n" <<
             "7 - set value\n" <<
-            "9 - stop\n";
+            "9 - stop\n" <<
+            "> ";
         std::cin >> choice;
         if (choice == 1) {
             std::cout << "Type any integer number: ";
