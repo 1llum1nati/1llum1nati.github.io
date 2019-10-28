@@ -45,10 +45,10 @@ protected:
     }
 
     void checkValues() {
-
         if (!sizeOfStack)
             std::cout << "Stack is empty!" << std::endl;
         else {
+        	
             Node *Temp = head;
             for(int i = 0; i != sizeOfStack; ++i) {
                 int tempInt = Temp->value;
@@ -56,6 +56,18 @@ protected:
                 std::cout << tempInt << std::endl;
             }
             delete Temp;
+            /*
+            int *tempArr = new int[sizeOfStack];
+            int TempSize = sizeOfStack;
+            for(int i = TempSize; i != 0; --i) {
+            	tempArr[i] = head->value;
+            	pop();
+            }
+            for(int i = 0; i != TempSize; ++i) {
+            	std::cout << tempArr[i] << std::endl;
+            	push(tempArr[i]);
+            }
+            delete tempArr;*/
         }
     }
     void front() {
