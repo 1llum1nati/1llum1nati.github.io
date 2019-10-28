@@ -86,13 +86,7 @@ public:
 };
 
 int &StackD::operator[] (int index) {
-    /*for(int i = 0; i < index; ++i) {
-         Temp = Temp->next;
-    }
-    return Temp->value;*/
-    
     StackD *TempStack = new StackD;
-    int TempSize = sizeOfStack;
     for(int i = 0; i != index; ++i) {
         TempStack->pushD(head->value);
         popD();
