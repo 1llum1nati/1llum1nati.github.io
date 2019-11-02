@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Threading;
 using Gtk;
 
 namespace parser
@@ -9,7 +9,7 @@ namespace parser
         {
             Application.Init();
             MainWindow win = new MainWindow();
-            win.Show();
+            win.ShowAll();
             Application.Run();
         }
     }

@@ -7,6 +7,7 @@ using OpenQA.Selenium;
 using System.IO;
 using Newtonsoft.Json;
 using System.Threading;
+using System.Diagnostics;
 
 public partial class MainWindow : Gtk.Window
 {
@@ -45,16 +46,18 @@ public partial class MainWindow : Gtk.Window
         public string MediaThumbedLink { get; set; }
     }
 
+    public static readonly object idTextLocker = 1, idImgLocker = 1, allLocker = 1;
+    public static readonly string textPath = @"/home/r3pl1c4nt/Docs/idText.json",
+                                  imgPath = @"/home/r3pl1c4nt/Docs/idImg.json",
+                                  allPath = @"/home/r3pl1c4nt/Docs/all.json";
+
     private class Chrome : MainWindow
     {
         string login, password;
-        static readonly string imagesWrap = "page_post_thumb_wrap",
+        public static readonly string imagesWrap = "page_post_thumb_wrap",
                                videoWrap = "page_post_thumb_video",
                                audioRow = "audio_row",
-                               GIFWrap = "page_post_thumb_unsized",
-                               textPath = @"/home/r3pl1c4nt/Docs/idText.json",
-                               imgPath = @"/home/r3pl1c4nt/Docs/idImg.json",
-                               allPath = @"/home/r3pl1c4nt/Docs/all.json";
+                               GIFWrap = "page_post_thumb_unsized";
 
         FileStream idTextFile = new FileStream(textPath, FileMode.Create, FileAccess.ReadWrite);
         FileStream idImgFile = new FileStream(imgPath, FileMode.Create, FileAccess.ReadWrite);
@@ -98,8 +101,30 @@ public partial class MainWindow : Gtk.Window
                     FindThumbs(item);
                 }
 
-                //Thread textThread = new Thread(() => JsonTextWrite(oldCount));
+                Thread textThread = new Thread(() => WriteText());
+                Thread imagesThread = new Thread(() => WriteImages());
+                Thread allThumbsThread = new Thread(() => WriteAllThumbs());
 
+                textThread.Start();
+                imagesThread.Start();
+                allThumbsThread.Start();
+
+                WaitJoin(textThread, imagesThread, allThumbsThread);
+
+            }
+        }
+
+        protected void WaitJoin(Thread textThread, Thread imagesThread, Thread allThumbsThread)
+        {
+            textThread.Join();
+            imagesThread.Join();
+            allThumbsThread.Join();
+        }
+
+        protected void WriteText()
+        {
+            lock(idTextLocker)
+            {
                 using (StreamWriter swText = new StreamWriter(textPath, true))
                 {
                     for (int i = oldCount; i < Elements.Count; ++i)
@@ -109,9 +134,16 @@ public partial class MainWindow : Gtk.Window
                             ID = PostID[i].Replace("\n", " "),
                             PostText = TextElements[i].Replace("\n", " ")
                         };
-                        swText.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented));
+                        swText.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented) + ",");
                     }
                 }
+            }
+        }
+
+        protected void WriteImages()
+        {
+            lock(idImgLocker)
+            {
                 using (StreamWriter swImg = new StreamWriter(imgPath, true))
                 {
                     for (int i = oldCount; i < Elements.Count; ++i)
@@ -121,9 +153,16 @@ public partial class MainWindow : Gtk.Window
                             ID = PostID[i].Replace("\n", " "),
                             Img = ImagesLinks[i].Replace("\n", " ")
                         };
-                        swImg.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented));
+                        swImg.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented) + ",");
                     }
                 }
+            }
+        }
+
+        protected void WriteAllThumbs()
+        {
+            lock(allLocker)
+            {
                 using (StreamWriter swAll = new StreamWriter(allPath, true))
                 {
                     for (int i = oldCount; i < Elements.Count; ++i)
@@ -142,7 +181,7 @@ public partial class MainWindow : Gtk.Window
                             Poster = PostersLinks[i].Replace("\n", " "),
                             MediaThumbedLink = MediaThumbedLinks[i].Replace("\n", " ")
                         };
-                        swAll.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented));
+                        swAll.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented) + ",");
                     }
                 }
             }
@@ -180,8 +219,8 @@ public partial class MainWindow : Gtk.Window
                 string TextElement = "";
                 if (Elements[item].FindElements(By.XPath(".//*[@class='wall_post_text']/span")).Count > 0)
                 {
-                    TextElement += Elements[item].FindElement(By.ClassName("wall_post_text")).Text.
-                    Substring(0, Elements[item].FindElement(By.ClassName("wall_post_text")).Text.Length - 19);
+                    TextElement += Elements[item].FindElement(By.ClassName("wall_post_text")).Text;
+                    //Substring(0, Elements[item].FindElement(By.ClassName("wall_post_text")).Text.Length - 19);
                     jsExecutor.ExecuteScript("arguments[0].style.display = 'block';", Elements[item].FindElement(By.ClassName("wall_post_text")).FindElement(By.TagName("span")));
                     TextElement += Elements[item].FindElement(By.XPath(".//*[@class='wall_post_text']/span")).Text + "\n";
                 }
@@ -356,9 +395,77 @@ public partial class MainWindow : Gtk.Window
         }
     }
 
+    protected static internal void ReadIdText()
+    {
+        lock (idTextLocker)
+        {
+            Process readerIdText = new Process();
+            string args = "--command nano " + textPath;
+            ProcessStartInfo readInfo = new ProcessStartInfo
+            {
+                FileName = "lxterminal",
+                Arguments = args
+            };
+            readerIdText.StartInfo = readInfo;
+            readerIdText.Start();
+        }
+    }
+
+    protected static internal void ReadIdImg()
+    {
+        lock (idImgLocker)
+        {
+            Process readerIdImg = new Process();
+            string args = "--command nano " + imgPath;
+            ProcessStartInfo readInfo = new ProcessStartInfo
+            {
+                FileName = "lxterminal",
+                Arguments = args
+            };
+            readerIdImg.StartInfo = readInfo;
+            readerIdImg.Start();
+        }
+    }
+
+    protected static internal void ReadAllFile()
+    {
+        lock (allLocker)
+        {
+            Process readerAll = new Process();
+            string args = "--command nano " + allPath;
+            ProcessStartInfo readInfo = new ProcessStartInfo
+            {
+                FileName = "lxterminal",
+                Arguments = args
+            };
+            readerAll.StartInfo = readInfo;
+            readerAll.Start();
+        }
+    }
+
     protected void OnButton2Clicked(object sender, EventArgs e)
     {
         Chrome Main = new Chrome();
-        Main.Init(entry1.Text, entry2.Text);
+        //Main.Init(entry1.Text, entry2.Text);
+        Thread mainThread = new Thread(() => Main.Init(entry1.Text, entry2.Text));
+        mainThread.Start();
+    }
+
+    protected void OnButton5Clicked(object sender, EventArgs e)
+    {
+        Thread readFirst = new Thread(() => ReadIdText());
+        readFirst.Start();
+    }
+
+    protected void OnButton6Clicked(object sender, EventArgs e)
+    {
+        Thread readSecond = new Thread(() => ReadIdImg());
+        readSecond.Start();
+    }
+
+    protected void OnButton7Clicked(object sender, EventArgs e)
+    {
+        Thread readThird = new Thread(() => ReadAllFile());
+        readThird.Start();
     }
 }
