@@ -64,7 +64,7 @@ public partial class MainWindow : Gtk.Window
         FileStream allFile = new FileStream(allPath, FileMode.Create, FileAccess.ReadWrite);
         static ChromeDriver driver = new ChromeDriver(InitOptions());
         static IJavaScriptExecutor jsExecutor = driver;
-        int oldCount;
+        int oldCount, textCounter, imgCounter, allCounter;
 
         List<IWebElement> Elements = new List<IWebElement>();
         List<string> PostID = new List<string>(),
@@ -85,7 +85,6 @@ public partial class MainWindow : Gtk.Window
         {
             login = log;
             password = pass;
-            ClearEntrys();
             driver.Navigate().GoToUrl("https://vk.com");
             Login();
             CloseStreams();
@@ -101,7 +100,7 @@ public partial class MainWindow : Gtk.Window
                     FindThumbs(item);
                 }
 
-                Thread textThread = new Thread(() => WriteText());
+                /*Thread textThread = new Thread(() => WriteText());
                 Thread imagesThread = new Thread(() => WriteImages());
                 Thread allThumbsThread = new Thread(() => WriteAllThumbs());
 
@@ -110,16 +109,38 @@ public partial class MainWindow : Gtk.Window
                 allThumbsThread.Start();
 
                 WaitJoin(textThread, imagesThread, allThumbsThread);
+                WaitJoin(textThread, imagesThread, allThumbsThread);*/
 
+                Random rnd = new Random();
+
+                for (int i = 0; i != 3; ++i) 
+                {
+                    int Temp = rnd.Next(3);
+                    if (Temp == 0)
+                    {
+                        Thread textThread = new Thread(() => WriteText());
+                        textThread.Start();
+                    }
+                    if (Temp == 1)
+                    {
+                        Thread imagesThread = new Thread(() => WriteImages());
+                        imagesThread.Start();
+                    }
+                    if (Temp == 2)
+                    {
+                        Thread allThumbsThread = new Thread(() => WriteAllThumbs());
+                        allThumbsThread.Start();
+                    }
+                }
             }
         }
 
-        protected void WaitJoin(Thread textThread, Thread imagesThread, Thread allThumbsThread)
+        /*protected void WaitJoin(Thread textThread, Thread imagesThread, Thread allThumbsThread)
         {
             textThread.Join();
             imagesThread.Join();
             allThumbsThread.Join();
-        }
+        }*/
 
         protected void WriteText()
         {
@@ -127,7 +148,7 @@ public partial class MainWindow : Gtk.Window
             {
                 using (StreamWriter swText = new StreamWriter(textPath, true))
                 {
-                    for (int i = oldCount; i < Elements.Count; ++i)
+                    for (int i = textCounter; i < Elements.Count; ++i)
                     {
                         Text temp = new Text
                         {
@@ -135,6 +156,7 @@ public partial class MainWindow : Gtk.Window
                             PostText = TextElements[i].Replace("\n", " ")
                         };
                         swText.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented) + ",");
+                        ++textCounter;
                     }
                 }
             }
@@ -146,7 +168,7 @@ public partial class MainWindow : Gtk.Window
             {
                 using (StreamWriter swImg = new StreamWriter(imgPath, true))
                 {
-                    for (int i = oldCount; i < Elements.Count; ++i)
+                    for (int i = imgCounter; i < Elements.Count; ++i)
                     {
                         Image temp = new Image
                         {
@@ -154,6 +176,7 @@ public partial class MainWindow : Gtk.Window
                             Img = ImagesLinks[i].Replace("\n", " ")
                         };
                         swImg.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented) + ",");
+                        ++imgCounter;
                     }
                 }
             }
@@ -165,7 +188,7 @@ public partial class MainWindow : Gtk.Window
             {
                 using (StreamWriter swAll = new StreamWriter(allPath, true))
                 {
-                    for (int i = oldCount; i < Elements.Count; ++i)
+                    for (int i = allCounter; i < Elements.Count; ++i)
                     {
                         All temp = new All
                         {
@@ -182,16 +205,12 @@ public partial class MainWindow : Gtk.Window
                             MediaThumbedLink = MediaThumbedLinks[i].Replace("\n", " ")
                         };
                         swAll.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented) + ",");
+                        ++allCounter;
                     }
                 }
             }
         }
 
-        protected void ClearEntrys()
-        {
-            entry1.Text = string.Empty;
-            entry2.Text = string.Empty;
-        }
         protected void CloseStreams()
         {
             idTextFile.Close();
@@ -391,7 +410,24 @@ public partial class MainWindow : Gtk.Window
             {
                 Geotags.Add("");
             }
+        }
+    }
 
+    protected static internal void ReadRand()
+    {
+        Random rnd = new Random();
+        int Temp = rnd.Next(3);
+        if (Temp == 0)
+        {
+            ReadIdText();
+        }
+        if (Temp == 1)
+        {
+            ReadIdImg();
+        }
+        if (Temp == 2)
+        {
+            ReadAllFile();
         }
     }
 
@@ -443,29 +479,38 @@ public partial class MainWindow : Gtk.Window
         }
     }
 
+    protected void ClearEntrys()
+    {
+        Application.Invoke(delegate {
+            entry1.Text = string.Empty;
+            entry2.Text = string.Empty;
+        });
+    }
+
     protected void OnButton2Clicked(object sender, EventArgs e)
     {
         Chrome Main = new Chrome();
         //Main.Init(entry1.Text, entry2.Text);
         Thread mainThread = new Thread(() => Main.Init(entry1.Text, entry2.Text));
         mainThread.Start();
+        ClearEntrys();
     }
 
     protected void OnButton5Clicked(object sender, EventArgs e)
     {
-        Thread readFirst = new Thread(() => ReadIdText());
+        Thread readFirst = new Thread(() => ReadRand());
         readFirst.Start();
     }
 
     protected void OnButton6Clicked(object sender, EventArgs e)
     {
-        Thread readSecond = new Thread(() => ReadIdImg());
-        readSecond.Start();
+        //Thread readSecond = new Thread(() => ReadIdImg());
+        //readSecond.Start();
     }
 
     protected void OnButton7Clicked(object sender, EventArgs e)
     {
-        Thread readThird = new Thread(() => ReadAllFile());
-        readThird.Start();
+        //Thread readThird = new Thread(() => ReadAllFile());
+        //readThird.Start();
     }
 }
