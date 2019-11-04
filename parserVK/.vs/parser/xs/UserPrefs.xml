@@ -1,9 +1,8 @@
 ﻿<Properties StartupConfiguration="{A645B75A-C091-4123-92D9-C22BFC821034}|Default">
   <MonoDevelop.Ide.ItemProperties.parser PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="parser/gtk-gui/MainWindow.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="parser/MainWindow.cs">
     <Files>
-      <File FileName="parser/MainWindow.cs" Line="113" Column="17" />
-      <File FileName="parser/gtk-gui/MainWindow.cs" Line="152" Column="64" />
+      <File FileName="parser/MainWindow.cs" Line="113" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">

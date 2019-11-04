@@ -50,6 +50,7 @@ public partial class MainWindow : Gtk.Window
     public static readonly string textPath = @"/home/r3pl1c4nt/Docs/idText.json",
                                   imgPath = @"/home/r3pl1c4nt/Docs/idImg.json",
                                   allPath = @"/home/r3pl1c4nt/Docs/all.json";
+    public static bool idTextIsFree = true, idImgIsFree = true, AllIsFree = true;
 
     private class Chrome : MainWindow
     {
@@ -144,8 +145,10 @@ public partial class MainWindow : Gtk.Window
 
         protected void WriteText()
         {
-            lock(idTextLocker)
+            //lock(idTextLocker)
+            if(idTextIsFree)
             {
+                idTextIsFree = false;
                 using (StreamWriter swText = new StreamWriter(textPath, true))
                 {
                     for (int i = textCounter; i < Elements.Count; ++i)
@@ -160,12 +163,15 @@ public partial class MainWindow : Gtk.Window
                     }
                 }
             }
+            idTextIsFree = true;
         }
 
         protected void WriteImages()
         {
-            lock(idImgLocker)
+            //lock(idImgLocker)
+            if(idImgIsFree)
             {
+                idImgIsFree = false;
                 using (StreamWriter swImg = new StreamWriter(imgPath, true))
                 {
                     for (int i = imgCounter; i < Elements.Count; ++i)
@@ -180,12 +186,15 @@ public partial class MainWindow : Gtk.Window
                     }
                 }
             }
+            idTextIsFree = true;
         }
 
         protected void WriteAllThumbs()
         {
-            lock(allLocker)
+            //lock(allLocker)
+            if(AllIsFree)
             {
+                AllIsFree = false;
                 using (StreamWriter swAll = new StreamWriter(allPath, true))
                 {
                     for (int i = allCounter; i < Elements.Count; ++i)
@@ -209,6 +218,7 @@ public partial class MainWindow : Gtk.Window
                     }
                 }
             }
+            idTextIsFree = true;
         }
 
         protected void CloseStreams()
@@ -433,8 +443,10 @@ public partial class MainWindow : Gtk.Window
 
     protected static internal void ReadIdText()
     {
-        lock (idTextLocker)
+        //lock (idTextLocker)
+        if(idTextIsFree)
         {
+            idTextIsFree = false;
             Process readerIdText = new Process();
             string args = "--command nano " + textPath;
             ProcessStartInfo readInfo = new ProcessStartInfo
@@ -445,12 +457,15 @@ public partial class MainWindow : Gtk.Window
             readerIdText.StartInfo = readInfo;
             readerIdText.Start();
         }
+        idTextIsFree = true;
     }
 
     protected static internal void ReadIdImg()
     {
-        lock (idImgLocker)
+        //lock (idImgLocker)
+        if(idImgIsFree)
         {
+            idImgIsFree = false;
             Process readerIdImg = new Process();
             string args = "--command nano " + imgPath;
             ProcessStartInfo readInfo = new ProcessStartInfo
@@ -461,12 +476,15 @@ public partial class MainWindow : Gtk.Window
             readerIdImg.StartInfo = readInfo;
             readerIdImg.Start();
         }
+        idImgIsFree = true;
     }
 
     protected static internal void ReadAllFile()
     {
-        lock (allLocker)
+        //lock (allLocker)
+        if(AllIsFree)
         {
+            AllIsFree = false;
             Process readerAll = new Process();
             string args = "--command nano " + allPath;
             ProcessStartInfo readInfo = new ProcessStartInfo
@@ -477,6 +495,7 @@ public partial class MainWindow : Gtk.Window
             readerAll.StartInfo = readInfo;
             readerAll.Start();
         }
+        AllIsFree = true;
     }
 
     protected void ClearEntrys()
