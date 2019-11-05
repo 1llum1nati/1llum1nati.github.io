@@ -51,6 +51,7 @@ public partial class MainWindow : Gtk.Window
                                   imgPath = @"/home/r3pl1c4nt/Docs/idImg.json",
                                   allPath = @"/home/r3pl1c4nt/Docs/all.json";
     public static bool idTextIsFree = true, idImgIsFree = true, AllIsFree = true;
+    public static Random rnd = new Random();
 
     private class Chrome : MainWindow
     {
@@ -84,11 +85,12 @@ public partial class MainWindow : Gtk.Window
 
         protected internal void Init(string log, string pass)
         {
+            CloseStreams();
             login = log;
             password = pass;
+            ClearEntrys();
             driver.Navigate().GoToUrl("https://vk.com");
             Login();
-            CloseStreams();
             while (true)
             {
                 oldCount = Elements.Count;
@@ -109,39 +111,39 @@ public partial class MainWindow : Gtk.Window
                 imagesThread.Start();
                 allThumbsThread.Start();
 
-                WaitJoin(textThread, imagesThread, allThumbsThread);
                 WaitJoin(textThread, imagesThread, allThumbsThread);*/
-
-                Random rnd = new Random();
-
                 for (int i = 0; i != 3; ++i) 
                 {
+                    Thread textThread = new Thread(() => WriteText());
+                    Thread imagesThread = new Thread(() => WriteImages());
+                    Thread allThumbsThread = new Thread(() => WriteAllThumbs());
                     int Temp = rnd.Next(3);
                     if (Temp == 0)
                     {
-                        Thread textThread = new Thread(() => WriteText());
                         textThread.Start();
                     }
                     if (Temp == 1)
                     {
-                        Thread imagesThread = new Thread(() => WriteImages());
                         imagesThread.Start();
                     }
                     if (Temp == 2)
                     {
-                        Thread allThumbsThread = new Thread(() => WriteAllThumbs());
                         allThumbsThread.Start();
                     }
+                    //WaitJoin(textThread, imagesThread, allThumbsThread);
                 }
             }
         }
 
-        /*protected void WaitJoin(Thread textThread, Thread imagesThread, Thread allThumbsThread)
+        protected void WaitJoin(Thread textThread, Thread imagesThread, Thread allThumbsThread)
         {
-            textThread.Join();
-            imagesThread.Join();
-            allThumbsThread.Join();
-        }*/
+            if(textThread.ThreadState == System.Threading.ThreadState.Running)
+                textThread.Join();
+            if (imagesThread.ThreadState == System.Threading.ThreadState.Running)
+                imagesThread.Join();
+            if (allThumbsThread.ThreadState == System.Threading.ThreadState.Running)
+                allThumbsThread.Join();
+        }
 
         protected void WriteText()
         {
@@ -162,8 +164,9 @@ public partial class MainWindow : Gtk.Window
                         ++textCounter;
                     }
                 }
+                idTextIsFree = true;
             }
-            idTextIsFree = true;
+
         }
 
         protected void WriteImages()
@@ -185,8 +188,8 @@ public partial class MainWindow : Gtk.Window
                         ++imgCounter;
                     }
                 }
+                idImgIsFree = true;
             }
-            idTextIsFree = true;
         }
 
         protected void WriteAllThumbs()
@@ -217,8 +220,8 @@ public partial class MainWindow : Gtk.Window
                         ++allCounter;
                     }
                 }
+                AllIsFree = true;
             }
-            idTextIsFree = true;
         }
 
         protected void CloseStreams()
@@ -425,7 +428,6 @@ public partial class MainWindow : Gtk.Window
 
     protected static internal void ReadRand()
     {
-        Random rnd = new Random();
         int Temp = rnd.Next(3);
         if (Temp == 0)
         {
@@ -456,8 +458,8 @@ public partial class MainWindow : Gtk.Window
             };
             readerIdText.StartInfo = readInfo;
             readerIdText.Start();
+            idTextIsFree = true;
         }
-        idTextIsFree = true;
     }
 
     protected static internal void ReadIdImg()
@@ -475,8 +477,8 @@ public partial class MainWindow : Gtk.Window
             };
             readerIdImg.StartInfo = readInfo;
             readerIdImg.Start();
+            idImgIsFree = true;
         }
-        idImgIsFree = true;
     }
 
     protected static internal void ReadAllFile()
@@ -494,8 +496,8 @@ public partial class MainWindow : Gtk.Window
             };
             readerAll.StartInfo = readInfo;
             readerAll.Start();
+            AllIsFree = true;
         }
-        AllIsFree = true;
     }
 
     protected void ClearEntrys()
@@ -512,13 +514,12 @@ public partial class MainWindow : Gtk.Window
         //Main.Init(entry1.Text, entry2.Text);
         Thread mainThread = new Thread(() => Main.Init(entry1.Text, entry2.Text));
         mainThread.Start();
-        ClearEntrys();
     }
 
     protected void OnButton5Clicked(object sender, EventArgs e)
     {
-        Thread readFirst = new Thread(() => ReadRand());
-        readFirst.Start();
+        Thread readRand = new Thread(() => ReadRand());
+        readRand.Start();
     }
 
     protected void OnButton6Clicked(object sender, EventArgs e)
