@@ -3,13 +3,18 @@
 #include <random>
 
 template<typename T>
-void HeapSort(int size, T arr[]) {
-    for(int i = 1; i < size; ++i) {
-        for(int k = i; k != 0 && arr[k-1] > arr[k]; --k) {
-            arr[k-1] += arr[k];
-            arr[k] = arr[k-1] - arr[k];
-            arr[k-1] -= arr[k];
+void ShellSort(int size, T arr[])
+{
+    int step = size / 2;
+    while (step > 0) {
+        for (int i = 0; i != (size - step); ++i) {
+            for(int j = i; j >= 0 && arr[j] > arr[j + step]; --j) {
+                arr[j] += arr[j + step];
+                arr[j + step] = arr[j] - arr[j + step];
+                arr[j] -= arr[j + step];
+            }
         }
+        step /= 2;
     }
 }
 
@@ -25,8 +30,7 @@ int main() {
         std::cout << b << " ";
     std::cout << '\n';
 
-    HeapSort(size, arr);
-
+    ShellSort(size, arr);
     for(auto &b: arr)
         std::cout << b << " ";
 }
