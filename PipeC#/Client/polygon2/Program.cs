@@ -7,10 +7,8 @@ namespace PipeApplication1
 {
     class ProgramPipeTest
     {
-
-        public void ThreadStartClient(object obj)
+        public static void ThreadStartClient(object obj)
         {
-            ManualResetEvent SyncClientServer = (ManualResetEvent)obj;
             using (NamedPipeClientStream pipeStream = new NamedPipeClientStream("mytestpipe"))
             {
                 pipeStream.Connect();
