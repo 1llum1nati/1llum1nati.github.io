@@ -6,7 +6,7 @@ template<typename T>
 void ShellSort(int size, T arr[])
 {
     int step = size / 2;
-    while (step > 0) {
+    while (step >= 1) {
         for (int i = 0; i != (size - step); ++i) {
             for(int j = i; j >= 0 && arr[j] > arr[j + step]; --j) {
                 arr[j] += arr[j + step];
