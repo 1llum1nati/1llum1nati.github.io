@@ -2,15 +2,12 @@
 using System.IO;
 using System.IO.Pipes;
 using System.Threading;
-//using System.Linq;
-//using System.Collections.Generic;
 
 namespace PipeApplication1
 {
     class ProgramPipeTest
     {
-
-        public void ThreadStartServer()
+        public static void ThreadStartServer()
         {
             using (NamedPipeServerStream pipeStream = new NamedPipeServerStream("mytestpipe"))
             {
@@ -26,8 +23,6 @@ namespace PipeApplication1
                     sw.Dispose();
                 }
             }
-
-            //Console.WriteLine("Connection lost");
         }
         
         static void Main(string[] args)
