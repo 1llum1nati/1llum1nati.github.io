@@ -31,6 +31,7 @@ int main() {
     std::cout << '\n';
 
     ShellSort(size, arr);
+    
     for(auto &b: arr)
         std::cout << b << " ";
 }
