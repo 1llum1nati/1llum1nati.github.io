@@ -31,7 +31,7 @@ public partial class MainWindow : Gtk.Window
         public string Img { get; set; }
     }
 
-    public class All
+    public class AllThumbs
     {
         public string ID { get; set; }
         public string Video { get; set; }
@@ -49,8 +49,8 @@ public partial class MainWindow : Gtk.Window
     public static readonly object idTextLocker = 1, idImgLocker = 1, allLocker = 1;
     public static readonly string textPath = @"/home/r3pl1c4nt/Docs/idText.json",
                                   imgPath = @"/home/r3pl1c4nt/Docs/idImg.json",
-                                  allPath = @"/home/r3pl1c4nt/Docs/all.json";
-    public static bool idTextIsFree = true, idImgIsFree = true, AllIsFree = true;
+                                  allThumbsPath = @"/home/r3pl1c4nt/Docs/allThumbs.json";
+    public static bool idTextIsFree = true, idImgIsFree = true, allThumbsIsFree = true;
     public static Random rnd = new Random();
 
     private class Chrome : MainWindow
@@ -63,10 +63,11 @@ public partial class MainWindow : Gtk.Window
 
         FileStream idTextFile = new FileStream(textPath, FileMode.Create, FileAccess.ReadWrite);
         FileStream idImgFile = new FileStream(imgPath, FileMode.Create, FileAccess.ReadWrite);
-        FileStream allFile = new FileStream(allPath, FileMode.Create, FileAccess.ReadWrite);
+        FileStream allThumbsFile = new FileStream(allThumbsPath, FileMode.Create, FileAccess.ReadWrite);
+
         static ChromeDriver driver = new ChromeDriver(InitOptions());
         static IJavaScriptExecutor jsExecutor = driver;
-        int oldCount, textCounter, imgCounter, allCounter;
+        int oldCount, textCounter, imgCounter, allThumbsCounter, idTextIteration = 19, idImgIteration = 19, allFileIteration = 19;
 
         List<IWebElement> Elements = new List<IWebElement>();
         List<string> PostID = new List<string>(),
@@ -83,144 +84,185 @@ public partial class MainWindow : Gtk.Window
                      PostersLinks = new List<string>(),
                      MediaThumbedLinks = new List<string>();
 
+        List<int> idTextPlanning = new List<int>(20),
+                  idImgPlanning = new List<int>(20),
+                  allThumbsFilePlanning = new List<int>(20);
+
+
         protected internal void Init(string log, string pass)
         {
+            Thread textThread = new Thread(() => WriteText());
+            Thread imagesThread = new Thread(() => WriteImages());
+            Thread allThumbsThread = new Thread(() => WriteAllThumbs());
+            Thread planningThread = new Thread(() => Planning());
+
+            for (int i = 0; i != 20; ++i)
+            {
+                idTextPlanning.Add(rnd.Next(3));
+                idImgPlanning.Add(rnd.Next(3));
+                allThumbsFilePlanning.Add(rnd.Next(3));
+            }
+
             CloseStreams();
             login = log;
             password = pass;
             ClearEntrys();
             driver.Navigate().GoToUrl("https://vk.com");
             Login();
+            textThread.Start();
+            imagesThread.Start();
+            allThumbsThread.Start();
+            planningThread.Start();
             while (true)
             {
                 oldCount = Elements.Count;
                 jsExecutor.ExecuteScript("window.scrollTo(0, document.body.scrollHeight);");
                 Elements = driver.FindElementsByCssSelector(".wall_post_cont").Distinct().ToList();
+
                 for (var item = oldCount; item != Elements.Count; ++item)
                 {
                     PostID.Add("https://vk.com/wall" + Elements[item].GetAttribute("id").Substring(3, Elements[item].GetAttribute("id").Length - 3));
                     FindText(item);
                     FindThumbs(item);
                 }
-
-                /*Thread textThread = new Thread(() => WriteText());
-                Thread imagesThread = new Thread(() => WriteImages());
-                Thread allThumbsThread = new Thread(() => WriteAllThumbs());
-
-                textThread.Start();
-                imagesThread.Start();
-                allThumbsThread.Start();
-
-                WaitJoin(textThread, imagesThread, allThumbsThread);*/
-                for (int i = 0; i != 3; ++i) 
-                {
-                    Thread textThread = new Thread(() => WriteText());
-                    Thread imagesThread = new Thread(() => WriteImages());
-                    Thread allThumbsThread = new Thread(() => WriteAllThumbs());
-                    int Temp = rnd.Next(3);
-                    if (Temp == 0)
-                    {
-                        textThread.Start();
-                    }
-                    if (Temp == 1)
-                    {
-                        imagesThread.Start();
-                    }
-                    if (Temp == 2)
-                    {
-                        allThumbsThread.Start();
-                    }
-                    //WaitJoin(textThread, imagesThread, allThumbsThread);
-                }
             }
         }
 
-        protected void WaitJoin(Thread textThread, Thread imagesThread, Thread allThumbsThread)
+        protected void Planning()
         {
-            if(textThread.ThreadState == System.Threading.ThreadState.Running)
-                textThread.Join();
-            if (imagesThread.ThreadState == System.Threading.ThreadState.Running)
-                imagesThread.Join();
-            if (allThumbsThread.ThreadState == System.Threading.ThreadState.Running)
-                allThumbsThread.Join();
+            while(true)
+            {
+                if(idTextIteration >= 19)
+                {
+                    idTextIteration = 0;
+                    for (int i = 0; i != 20; ++i)
+                    {
+                        idTextPlanning[i] = rnd.Next(3);
+                    }
+                }
+
+                if (idImgIteration >= 19)
+                {
+                    idImgIteration = 0;
+                    for (int i = 0; i != 20; ++i)
+                    {
+                        idImgPlanning[i] = rnd.Next(3);
+                    }
+                }
+                if (allFileIteration >= 19)
+                {
+                    allFileIteration = 0;
+                    for (int i = 0; i != 20; ++i)
+                    {
+                        idTextPlanning[i] = rnd.Next(3);
+                    }
+                }
+            }
         }
+       
 
         protected void WriteText()
         {
-            //lock(idTextLocker)
-            if(idTextIsFree)
+            while (true)
             {
-                idTextIsFree = false;
-                using (StreamWriter swText = new StreamWriter(textPath, true))
+                if (idTextIteration < 19)
                 {
-                    for (int i = textCounter; i < Elements.Count; ++i)
+                    ++idTextIteration;
+                    if (idTextPlanning[idTextIteration] == 0)
                     {
-                        Text temp = new Text
+                        while (!idTextIsFree)
+                            Thread.Sleep(100);
+                        idTextIsFree = false;
+                        int TempElementsCount = oldCount;
+                        using (StreamWriter swText = new StreamWriter(textPath, true))
                         {
-                            ID = PostID[i].Replace("\n", " "),
-                            PostText = TextElements[i].Replace("\n", " ")
-                        };
-                        swText.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented) + ",");
-                        ++textCounter;
+                            for (int i = textCounter; i < TempElementsCount; ++i)
+                            {
+                                Text temp = new Text
+                                {
+                                    ID = PostID[i].Replace("\n", " "),
+                                    PostText = TextElements[i].Replace("\n", " ")
+                                };
+                                swText.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented) + ",");
+                                ++textCounter;
+                            }
+                        }
+                        idTextIsFree = true;
                     }
                 }
-                idTextIsFree = true;
             }
-
         }
 
         protected void WriteImages()
         {
-            //lock(idImgLocker)
-            if(idImgIsFree)
+            while(true)
             {
-                idImgIsFree = false;
-                using (StreamWriter swImg = new StreamWriter(imgPath, true))
+                if (idImgIteration < 19)
                 {
-                    for (int i = imgCounter; i < Elements.Count; ++i)
+                    ++idImgIteration;
+                    if (idImgPlanning[idImgIteration] == 0)
                     {
-                        Image temp = new Image
+                        while (!idImgIsFree)
+                            Thread.Sleep(100);
+                        idImgIsFree = false;
+                        int TempElementsCount = oldCount;
+                        using (StreamWriter swImg = new StreamWriter(imgPath, true))
                         {
-                            ID = PostID[i].Replace("\n", " "),
-                            Img = ImagesLinks[i].Replace("\n", " ")
-                        };
-                        swImg.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented) + ",");
-                        ++imgCounter;
+                            for (int i = imgCounter; i < TempElementsCount; ++i)
+                            {
+                                Image temp = new Image
+                                {
+                                    ID = PostID[i].Replace("\n", " "),
+                                    Img = ImagesLinks[i].Replace("\n", " ")
+                                };
+                                swImg.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented) + ",");
+                                ++imgCounter;
+                            }
+                        }
+                        idImgIsFree = true;
                     }
                 }
-                idImgIsFree = true;
             }
         }
 
         protected void WriteAllThumbs()
         {
-            //lock(allLocker)
-            if(AllIsFree)
+            while (true)
             {
-                AllIsFree = false;
-                using (StreamWriter swAll = new StreamWriter(allPath, true))
+                if (allFileIteration < 19)
                 {
-                    for (int i = allCounter; i < Elements.Count; ++i)
+                    ++allFileIteration;
+                    if (allThumbsFilePlanning[allFileIteration] == 0)
                     {
-                        All temp = new All
+                        while (!allThumbsIsFree)
+                            Thread.Sleep(100);
+                        allThumbsIsFree = false;
+                        int TempElementsCount = oldCount;
+                        using (StreamWriter swAll = new StreamWriter(allThumbsPath, true))
                         {
-                            ID = PostID[i].Replace("\n", " "),
-                            Video = VideosLinks[i].Replace("\n", " "),
-                            Audio = AudiosLinks[i].Replace("\n", " "),
-                            GIF = GIFsLinks[i].Replace("\n", " "),
-                            Doc = DocumentsLinks[i].Replace("\n", " "),
-                            Article = ArticlesLinks[i].Replace("\n", " "),
-                            Poll = PollsLinks[i].Replace("\n", " "),
-                            ThumbedLink = ThumbedLinks[i].Replace("\n", " "),
-                            Geotag = Geotags[i].Replace("\n", " "),
-                            Poster = PostersLinks[i].Replace("\n", " "),
-                            MediaThumbedLink = MediaThumbedLinks[i].Replace("\n", " ")
-                        };
-                        swAll.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented) + ",");
-                        ++allCounter;
+                            for (int i = allThumbsCounter; i < TempElementsCount; ++i)
+                            {
+                                AllThumbs temp = new AllThumbs
+                                {
+                                    ID = PostID[i].Replace("\n", " "),
+                                    Video = VideosLinks[i].Replace("\n", " "),
+                                    Audio = AudiosLinks[i].Replace("\n", " "),
+                                    GIF = GIFsLinks[i].Replace("\n", " "),
+                                    Doc = DocumentsLinks[i].Replace("\n", " "),
+                                    Article = ArticlesLinks[i].Replace("\n", " "),
+                                    Poll = PollsLinks[i].Replace("\n", " "),
+                                    ThumbedLink = ThumbedLinks[i].Replace("\n", " "),
+                                    Geotag = Geotags[i].Replace("\n", " "),
+                                    Poster = PostersLinks[i].Replace("\n", " "),
+                                    MediaThumbedLink = MediaThumbedLinks[i].Replace("\n", " ")
+                                };
+                                swAll.WriteLine(JsonConvert.SerializeObject(temp, Formatting.Indented) + ",");
+                                ++allThumbsCounter;
+                            }
+                        }
+                        allThumbsIsFree = true;
                     }
                 }
-                AllIsFree = true;
             }
         }
 
@@ -228,7 +270,7 @@ public partial class MainWindow : Gtk.Window
         {
             idTextFile.Close();
             idImgFile.Close();
-            allFile.Close();
+            allThumbsFile.Close();
         }
         protected static ChromeOptions InitOptions()
         {
@@ -484,11 +526,11 @@ public partial class MainWindow : Gtk.Window
     protected static internal void ReadAllFile()
     {
         //lock (allLocker)
-        if(AllIsFree)
+        if(allThumbsIsFree)
         {
-            AllIsFree = false;
+            allThumbsIsFree = false;
             Process readerAll = new Process();
-            string args = "--command nano " + allPath;
+            string args = "--command nano " + allThumbsPath;
             ProcessStartInfo readInfo = new ProcessStartInfo
             {
                 FileName = "lxterminal",
@@ -496,7 +538,7 @@ public partial class MainWindow : Gtk.Window
             };
             readerAll.StartInfo = readInfo;
             readerAll.Start();
-            AllIsFree = true;
+            allThumbsIsFree = true;
         }
     }
 

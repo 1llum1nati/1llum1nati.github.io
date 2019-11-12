@@ -138,7 +138,7 @@
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextOnly</property>
-                <property name="Label" translatable="yes">Read allFile.json</property>
+                <property name="Label" translatable="yes">Read allThumbsFile.json</property>
                 <property name="UseUnderline">True</property>
                 <signal name="Clicked" handler="OnButton7Clicked" />
               </widget>
