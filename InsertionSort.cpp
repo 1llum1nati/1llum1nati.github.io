@@ -3,7 +3,7 @@
 #include <random>
 
 template<typename T>
-void HeapSort(int size, T arr[]) {
+void InsertionSort(int size, T arr[]) {
     for(int i = 1; i < size; ++i) {
         for(int k = i; k != 0 && arr[k-1] > arr[k]; --k) {
             arr[k-1] += arr[k];
@@ -25,9 +25,9 @@ int main() {
         std::cout << b << " ";
     std::cout << '\n';
 
-    HeapSort(size, arr);
+    InsertionSort(size, arr);
 
-    for(auto &b: arr)
+    for(auto b: arr)
         std::cout << b << " ";
 }
 
