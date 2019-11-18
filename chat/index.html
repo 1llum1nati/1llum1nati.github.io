@@ -1,0 +1,167 @@
+<html>
+    <body>
+        <style>
+        body {
+            margin: 0;
+        }
+        section#sectionChat {
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            font-size: 25px;
+            font-family: Montserrat;
+        }
+        div#chat {
+            display: flex;
+            flex-direction: column;
+            width: 80vw;
+            background-color: #fff;
+        }
+        div.question {
+            background-color: #000;
+            font-size: 100%;
+            color: #fff;
+            margin-top: 5%;
+            max-width: 70%;
+            margin-left: 5%;
+            border-radius: 0px 40px 40px 40px;
+            animation-name: display;
+            animation-duration: 2s;
+        }
+        div.answer {
+            background-color: #ebc984;
+            font-size: 100%;
+            color: #fff;
+            align-self: flex-end;
+            margin-top: 5%;
+            max-width: 40%;
+            margin-right: 5%;
+            text-align: right;
+            border-radius: 40px 0px 40px 40px;
+            animation-name: display;
+            animation-duration: 2s;
+        }
+        @keyframes display {
+            0% {opacity: 0.7;}
+            100% {opacity: 1;}
+        }
+        .hidden {
+            display: none;
+        }
+        div#buttons {
+            display: flex;
+            flex-direction: row;
+            margin: 5% 0% 5% 5%;
+        }
+        div.button {
+            background-color: #ebc984;
+            font-size: 100%;
+            color: #fff;
+            margin-right: 2%;
+            border-radius: 40px;
+            animation-name: display;
+            animation-duration: 2s;
+            cursor: pointer;
+        }
+        p#buttonText {
+            padding: 0px 30px;
+        }
+        p.text {
+            padding: 5px 50px;
+        }
+        </style>
+        <section id="sectionChat">
+            <div id="chat">
+                <div class="question">
+                    <p class="text">
+                        Скоро день рождения мужчины/годовщина/Новый Год, и вы не знаете,
+                        что подарить?
+                    </p>
+                </div>
+                <div class="answer hidden">
+                    <p class="text">
+                        Ага
+                    </p>
+                </div>
+                <div id="secondQuestion" class="question hidden">
+                    <p class="text">
+                        Подарите Black Box, такой подарок запомнится надолго!
+                    </p>
+                </div>
+                <div class="answer hidden">
+                    <p class="text">
+                        Что такое Black Box?
+                    </p>
+                </div>
+                <div id="thirdQuestion" class="question hidden">
+                    <p class="text">
+                        Black Box - мужские подарочные наборы в заколоченных деревянных ящиках.
+                    </p>
+                </div>
+                <div id="fourthQuestion"class="question hidden">
+                    <p class="text">
+                        Мужчине придется потрудиться, чтобы добраться до подарка.
+                    </p>
+                </div>
+                <div class="answer hidden">
+                    <p class="text">
+                        А какие есть наборы?
+                    </p>
+                </div>
+                <div id="fifthQuestion" class="question hidden">
+                    <p class="text">
+                        Ниже есть <a href="" style="color: #ebc984"> каталог </a>
+                    </p>
+                </div>
+                <div id="buttons">
+                    <div id="button1" class="button">
+                        <p id="buttonText">Ага...</p>
+                    </div>
+                </div>
+            </div>
+            <script>
+                var button1 = document.getElementById('button1');
+                var chat = document.getElementById('sectionChat');
+                var buttonText = document.getElementById('buttonText');
+
+                var counterQuestions = 0;
+                var counterAnswers = 0;
+                button1.addEventListener("click", modify, false);
+                
+                var questions = document.querySelectorAll(".question");
+                var answers = document.querySelectorAll(".answer");
+                function sleep(ms) {
+                    return new Promise(resolve => setTimeout(resolve, ms));
+                }
+                async function modify() {
+                    button1.classList.add('hidden');
+                    answers[counterAnswers].classList.remove('hidden');
+                    window.scrollTo(0, chat.scrollHeight);
+                    ++counterQuestions;
+                    
+                    if (counterQuestions == 2) {
+                        await sleep(1000);
+                        questions[counterQuestions].classList.remove('hidden');
+                        window.scrollTo(0, chat.scrollHeight);
+                        ++counterQuestions;
+                    }
+                    await sleep(1000);
+                    questions[counterQuestions].classList.remove('hidden');
+                    window.scrollTo(0, chat.scrollHeight);
+                    if (counterAnswers < 2) {
+                        buttonText.innerHTML = answers[counterAnswers+1].textContent;
+                    }
+                    ++counterAnswers;
+                    
+                    if (counterQuestions != 4) {
+                        await sleep(1000);
+                        button1.classList.remove('hidden');
+                    }
+                    window.scrollTo(0, chat.scrollHeight);
+                }
+            </script>
+        </section>
+
+    </body>
+</html>
