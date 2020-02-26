@@ -1,0 +1,100 @@
+@font-face {
+    font-family: Oswald;
+    src: url(../fonts/oswald.ttf);
+}
+@font-face {
+	font-family: Montserrat-Regular;
+    src: url(../fonts/Montserrat-Regular.ttf);
+}
+
+@font-face {
+	font-family: Montserrat-SemiBold;
+    src: url(../fonts/Montserrat-SemiBold.ttf);
+}
+
+div#header {
+	display: flex; 
+	min-height: 5%; 
+	width: 100%; 
+	background-color: white;
+	align-items: center;
+	border-bottom: solid 2px;
+	position: fixed;  
+	top: 0;  
+	z-index: 100;
+}
+
+div.tab {
+	display: flex;
+	flex-direction; column;
+	justify-content: center;
+	min-height: 100%; 
+	width: 15%; 
+	background-color: white;
+	flex: 1;
+	border-left: solid 2px;
+	line-height: 2%;
+}
+
+div#title {
+	width: 50%;
+	background-color: white;
+	flex: 3;
+}
+
+div.mainBlock {
+	display: flex; 
+	flex-direction: column; 
+	margin: auto; 
+	margin-top: 45px; 
+
+	width: 87.5%;
+	box-shadow: 0 0 10px rgba(0,0,0,0.5);
+	align-items: center;
+}
+
+div.blockHeader {
+	display: flex; 
+	width: 100%;
+	justify-content: center; 
+	align-items: center; 
+	margin-bottom: -20px;
+	font-size: 22px; 
+	font-family: Oswald;
+}
+
+div.descrText {
+	width: 90%; 
+	font-family: Montserrat-Regular; 
+	margin-bottom: 20px;">
+}
+
+div#mainHeader {
+	width: 100%; 
+	font-size: 25px; 
+	font-family: Oswald; 
+	text-align: center; 
+}
+
+div.mainGallery {
+	display: flex; 
+	width: 91%; 
+	justify-content: space-around; 
+	margin-top: 20px; 
+	margin-bottom: 60px;
+}
+
+a.link {
+	color: black;
+	outline: none;
+}
+
+p.headerText {
+	font-family: Oswald;
+	font-weight: Semi-Bold;
+	font-size: 20px;
+}
+img.photo {
+	width:32%; 
+	max-height: 400px
+}
