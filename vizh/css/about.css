@@ -1,0 +1,28 @@
+a {
+    color: black; 
+    outline: none;
+}
+
+h1.h1_task {
+    font-family: 'Times New Roman', Times, serif; 
+    font-size: 18px; 
+    text-align: left; 
+    margin-bottom: 18px;
+}
+
+h2.h2_task {
+    font-family: Arial; 
+    font-size: 14px; 
+    text-align: left; 
+    margin-bottom: 12px; 
+    line-height: 20px;
+}
+
+p.p_task {
+    font-family: Arial; 
+    font-size: 14px; 
+    text-align: justify; 
+    margin-bottom: 12px; 
+    line-height: 1.5; 
+    text-indent: 0.787in;
+}
