@@ -16,6 +16,7 @@ h2.h2_task {
     text-align: left; 
     margin-bottom: 12px; 
     line-height: 20px;
+    font-style: italic;
 }
 
 p.p_task {
@@ -25,4 +26,5 @@ p.p_task {
     margin-bottom: 12px; 
     line-height: 1.5; 
     text-indent: 0.787in;
+    font-style: italic;
 }
