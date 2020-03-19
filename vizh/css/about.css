@@ -8,6 +8,8 @@ h1.h1_task {
     font-size: 18px; 
     text-align: left; 
     margin-bottom: 18px;
+    text-shadow: black 1px 1px 1px;
+    text-transform: uppercase;
 }
 
 h2.h2_task {
@@ -17,14 +19,27 @@ h2.h2_task {
     margin-bottom: 12px; 
     line-height: 20px;
     font-style: italic;
+    font-variant: small-caps;
 }
 
 p.p_task {
-    font-family: Arial; 
+    font-family: 'Courier New', Courier, monospace; 
     font-size: 14px; 
     text-align: justify; 
     margin-bottom: 12px; 
     line-height: 1.5; 
     text-indent: 0.787in;
     font-style: italic;
+}
+
+#note {
+    position: absolute; 
+    width: 120px; 
+    height: 40px; background-color: red; 
+    margin-left: 30%; 
+    text-align: center; 
+    display: none;
+}
+#note:target {
+    display: block;
 }
