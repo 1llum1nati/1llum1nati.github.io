@@ -259,10 +259,8 @@
     function clearField() {
         field.innerHTML = ``;
         field.style.display = 'none';
-        currentMines = 0;
-        win = 0;
+        flag = 0; win = 0;
         reset();
-        flag = 0;
         createField.addEventListener('click', newField);
     }
 
